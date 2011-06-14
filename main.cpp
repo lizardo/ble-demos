@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QWidget>
 #include <QObject>
 #include <QtDBus>
 
@@ -6,6 +7,8 @@
 #include "manager.h"
 #include "adapter.h"
 #include "proximity.h"
+
+#include "monitor.h"
 
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
@@ -102,6 +105,8 @@ int main(int argc, char **argv)
 		proxClass,
 		SLOT(propertyChanged(const QString &, const QDBusVariant &)));
 
+	Monitor *monitor = new Monitor();
+	monitor->show();
 	app.exec();
 }
 

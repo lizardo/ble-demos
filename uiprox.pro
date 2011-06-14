@@ -13,10 +13,12 @@ SOURCES += main.cpp \
            manager.cpp \
            adapter.cpp \
            device.cpp \
-           proximity.cpp\
+           proximity.cpp \
+	   monitor.cpp \
 
 HEADERS += types.h \
            manager.h \
            adapter.h \
            device.h \
-           proximity.h
+           proximity.h \
+           monitor.h \
