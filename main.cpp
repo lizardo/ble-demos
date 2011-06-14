@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QObject>
 #include <QtDBus>
 
 #include "types.h"
@@ -13,10 +14,10 @@ class ProxClass: public QObject
 {
 	Q_OBJECT
 public slots:
-	void propertyChanded(const QString &property, const QVariant &value);
+	void propertyChanged(const QString &property, const QDBusVariant &value);
 };
 
-void ProxClass::propertyChanded(const QString &property, const QVariant &value)
+void ProxClass::propertyChanged(const QString &property, const QDBusVariant &value)
 {
 	Q_UNUSED(value);
 	qWarning() << property;
@@ -86,22 +87,20 @@ int main(int argc, char **argv)
 	foreach (QString k, properties.value().keys())
 		qDebug() << k;
 
+
 /*
 	QMapIterator<QString, QVariant> m(properties.value());
 	while (m.hasNext())
 		qDebug() << m.key() << m.value();
-		*/
 
+		*/
 	ProxClass *proxClass = new ProxClass();
 
-	if (dbus.connect(
-		QString("org.bluez"),
-		obReply.value().path(),
-		"org.bluez.Proximity",
-		QString("PropertyChanged"),
+	QObject::connect(
+		&proximity,
+		SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
 		proxClass,
-		SLOT(propertyChanged(QString,QVariant))))
-		qDebug() << "Connection is true!";
+		SLOT(propertyChanged(const QString &, const QDBusVariant &)));
 
 	app.exec();
 }
