@@ -1,0 +1,5 @@
+These files were generated using the qdbus tool. For example:
+
+$ qdbus --system org.bluez / org.freedesktop.DBus.Introspectable.Introspect > manager.xml
+
+This assumes that bluetoothd is running and is more recent than 4.54.

@@ -1,6 +1,11 @@
 #include <QApplication>
 #include <QtDBus>
 
+#include "types.h"
+#include "manager.h"
+#include "adapter.h"
+#include "proximity.h"
+
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
@@ -28,52 +33,43 @@ int main(int argc, char **argv)
 	qWarning() << "Connecting...";
 	if (dbus.isConnected())
 		qWarning() << "Connected!";
-
-
-	QDBusReply<QStringList> reply = QDBusConnection::systemBus().interface()->registeredServiceNames();
-	if (!reply.isValid()) {
-		qDebug() << "Error:" << reply.error().message();
-		exit(1);
-	}
 /*
 	foreach (QString name, reply.value())
 		qDebug() << name;
 */
 
-	QDBusInterface dbus_iface("org.bluez", "/",
-				"org.bluez.Manager", dbus);
+	org::bluez::Manager manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
 
 	qWarning() << "Looking for adapter..." <<  hci;
-	QDBusReply<QDBusObjectPath> adapterPath = dbus_iface.call("FindAdapter", hci);
-	if (!adapterPath.isValid())
-		adapterPath = dbus_iface.call("DefaultAdapter");
+	QDBusReply<QDBusObjectPath> obReply = manager.FindAdapter(hci);
+	if (!obReply.isValid())
+		obReply = manager.DefaultAdapter();
 
-	if (!adapterPath.isValid()) {
-		qWarning() << "Error:" << reply.error();
+	if (!obReply.isValid()) {
+		qWarning() << "Error:" << obReply.error();
 		exit(1);
 	}
 
-	qDebug() << adapterPath.value().path();
+	qDebug() << obReply.value().path();
 
-	QDBusInterface adapter("org.bluez", adapterPath.value().path(),
-				"org.bluez.Adapter", dbus);
-
+	org::bluez::Adapter adapter(BLUEZ_SERVICE_NAME,
+					obReply.value().path(), dbus);
 
 	qWarning() << "Looking for device... ";
-	QDBusReply<QDBusObjectPath> d = adapter.call("FindDevice", dba);
+	obReply = adapter.FindDevice(dba);
 
-	if (!d.isValid()) {
-		qWarning() << "Error:" << d.error();
+	if (!obReply.isValid()) {
+		qWarning() << "Error:" << obReply.error();
 		exit(1);
 	}
 
-	qDebug() << d.value().path();
+	qDebug() << obReply.value().path();
 
 	qWarning() << "Checking proximity capacity...";
-	QDBusInterface proximity("org.bluez", d.value().path(),
-				"org.bluez.Proximity", dbus);
+	org::bluez::Proximity proximity(BLUEZ_SERVICE_NAME,
+				obReply.value().path(), dbus);
 
-	QDBusReply<PropertyMap> properties = proximity.call("GetProperties");
+	QDBusReply<PropertyMap> properties = proximity.GetProperties();
 	if (!properties.isValid()) {
 		qDebug() << "Error: " << properties.error();
 		exit(1);
@@ -100,7 +96,7 @@ int main(int argc, char **argv)
 
 	if (dbus.connect(
 		QString("org.bluez"),
-		d.value().path(),
+		obReply.value().path(),
 		"org.bluez.Proximity",
 		QString("PropertyChanged"),
 		proxClass,

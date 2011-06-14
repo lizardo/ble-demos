@@ -9,4 +9,14 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-SOURCES += main.cpp
+SOURCES += main.cpp \
+           manager.cpp \
+           adapter.cpp \
+           device.cpp \
+           proximity.cpp\
+
+HEADERS += types.h \
+           manager.h \
+           adapter.h \
+           device.h \
+           proximity.h
