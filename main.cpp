@@ -67,6 +67,12 @@ ProxClass::ProxClass(QString hci, QString dba)
 	proximity = new org::bluez::Proximity(BLUEZ_SERVICE_NAME,
 				obReply.value().path(), dbus);
 
+	QObject::connect(
+		proximity,
+		SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
+		this,
+		SLOT(propertyChanged(const QString &, const QDBusVariant &)));
+
 	QDBusReply<PropertyMap> properties = proximity->GetProperties();
 	if (!properties.isValid()) {
 		qDebug() << "Error: " << properties.error();
@@ -94,24 +100,23 @@ void ProxClass::propertyChanged(const QString &property, const QDBusVariant &val
 
 void ProxClass::thresholdChanged(int value)
 {
-	qWarning() << value;
-	/*
 	QVariant arg;
 
 	switch (value) {
 	case 0:
-		arg.setValue("low");
+		arg = QString("low");
 		break;
 	case 1:
-		arg.setValue("medium");
+		arg = QString("medium");
 		break;
 	case 2:
-		arg.setValue("high");
+		arg = QString("high");
 		break;
 	}
 
+	qWarning() << arg.toString();
+
 	proximity->SetProperty("Threshold", QDBusVariant(arg));
-	*/
 }
 
 int main(int argc, char **argv)
@@ -132,11 +137,6 @@ int main(int argc, char **argv)
 		qDebug() << m.key() << m.value();
 
 
-	QObject::connect(
-		&proximity,
-		SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
-		proxClass,
-		SLOT(propertyChanged(const QString &, const QDBusVariant &)));
 		*/
 
 	Monitor *monitor = new Monitor();
