@@ -140,6 +140,11 @@ int main(int argc, char **argv)
 		*/
 
 	Monitor *monitor = new Monitor();
+
+	QObject::connect(
+		monitor, SIGNAL(thresholdChanged(int)),
+		proxClass, SLOT(thresholdChanged(int)));
+
 	monitor->show();
 	app.exec();
 }
