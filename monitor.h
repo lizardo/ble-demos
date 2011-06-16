@@ -9,8 +9,9 @@ public:
 
 signals:
 	void thresholdChanged(int value);
+	void pathlossChanged(int value);
 
 private:
-	QVBoxLayout *slidersBox;
 	QSlider *threshold;
+	QSlider *pathloss;
 };

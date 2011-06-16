@@ -1,29 +1,35 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include "monitor.h"
 
 Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent, f)
 {
-	QHBoxLayout *sliderBox;
+	QGridLayout *slidersBox;
 	QLabel *label;
 
-	sliderBox = new QHBoxLayout();
-	slidersBox = new QVBoxLayout(this);
+	slidersBox = new QGridLayout(this);
 
-	label = new QLabel("Threshold");
+	label = new QLabel("Threshold:");
 	threshold = new QSlider(Qt::Horizontal);
 	threshold->setMaximum(2);
 	connect(threshold, SIGNAL(valueChanged(int)),
 		this, SIGNAL(thresholdChanged(int)));
 
-	sliderBox->addWidget(label);
-	sliderBox->addSpacing(5);
-	sliderBox->addWidget(threshold);
+	slidersBox->addWidget(label, 0, 0, Qt::AlignRight);
+	slidersBox->addWidget(threshold, 0, 1);
 
-	slidersBox->addLayout(sliderBox);
+	label = new QLabel("PathLoss Alert Level:");
+	pathloss = new QSlider(Qt::Horizontal);
+	pathloss->setMaximum(2);
+	connect(pathloss, SIGNAL(valueChanged(int)),
+		this, SIGNAL(pathlossChanged(int)));
+
+	slidersBox->addWidget(label, 1, 0, Qt::AlignRight);
+	slidersBox->addWidget(pathloss, 1, 1);
 
 	setLayout(slidersBox);
 }

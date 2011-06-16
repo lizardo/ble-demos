@@ -22,6 +22,7 @@ public:
 public slots:
 	void propertyChanged(const QString &property, const QDBusVariant &value);
 	void thresholdChanged(int value);
+	void pathlossChanged(int value);
 
 private:
 	org::bluez::Manager *manager;
@@ -119,6 +120,27 @@ void ProxClass::thresholdChanged(int value)
 	proximity->SetProperty("Threshold", QDBusVariant(arg));
 }
 
+void ProxClass::pathlossChanged(int value)
+{
+	QVariant arg;
+
+	switch (value) {
+	case 0:
+		arg = QString("none");
+		break;
+	case 1:
+		arg = QString("mild");
+		break;
+	case 2:
+		arg = QString("high");
+		break;
+	}
+
+	qWarning() << arg.toString();
+
+	proximity->SetProperty("PathLossAlertLevel", QDBusVariant(arg));
+}
+
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
@@ -144,6 +166,10 @@ int main(int argc, char **argv)
 	QObject::connect(
 		monitor, SIGNAL(thresholdChanged(int)),
 		proxClass, SLOT(thresholdChanged(int)));
+
+	QObject::connect(
+		monitor, SIGNAL(pathlossChanged(int)),
+		proxClass, SLOT(pathlossChanged(int)));
 
 	monitor->show();
 	app.exec();
