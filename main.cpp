@@ -19,6 +19,9 @@ class ProxClass: public QObject
 public:
 	ProxClass(QString adapter, QString bda);
 
+signals:
+	void alarmCalled(QString type);
+
 public slots:
 	void propertyChanged(const QString &property, const QDBusVariant &value);
 	void thresholdChanged(int value);
@@ -97,6 +100,9 @@ void ProxClass::propertyChanged(const QString &property, const QDBusVariant &val
 {
 	Q_UNUSED(value);
 	qWarning() << property;
+
+	if (property == "PathLoss")
+		emit alarmCalled(property);
 }
 
 void ProxClass::thresholdChanged(int value)
@@ -170,6 +176,10 @@ int main(int argc, char **argv)
 	QObject::connect(
 		monitor, SIGNAL(pathlossChanged(int)),
 		proxClass, SLOT(pathlossChanged(int)));
+
+	QObject::connect(
+		proxClass, SIGNAL(alarmCalled(QString)),
+		monitor, SLOT(playAlarm(QString)));
 
 	monitor->show();
 	app.exec();

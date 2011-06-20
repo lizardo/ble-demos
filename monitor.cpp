@@ -3,6 +3,9 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
+
+#include <Phonon/MediaSource>
+
 #include "monitor.h"
 
 Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
@@ -32,4 +35,34 @@ Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
 	slidersBox->addWidget(pathloss, 1, 1);
 
 	setLayout(slidersBox);
+
+
+	mildAlarm = Phonon::createPlayer(Phonon::MusicCategory,
+					Phonon::MediaSource("./mild.wav"));
+
+	QObject::connect(mildAlarm, SIGNAL(finished()), this,
+	SLOT(playFinished()));
+
+	mildAlarm = Phonon::createPlayer(Phonon::NotificationCategory);
+}
+
+void Monitor::playAlarm(QString type)
+{
+	static int i = 0;
+	QString mildFile("./mild.wav");
+	Q_UNUSED(type);
+
+	if (type == "PathLoss")
+		mildAlarm->setCurrentSource(mildFile);
+	mildAlarm->play();
+
+	i++;
+}
+
+void Monitor::playFinished()
+{
+	static int i = 0;
+	qWarning() << i << "finished" << mildAlarm->state() << mildAlarm->queue().count();
+
+	i++;
 }
