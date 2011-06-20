@@ -26,6 +26,8 @@ public slots:
 	void propertyChanged(const QString &property, const QDBusVariant &value);
 	void thresholdChanged(int value);
 	void pathlossChanged(int value);
+	void linkLossChanged(int value);
+	void findMeChanged(int value);
 
 private:
 	org::bluez::Manager *manager;
@@ -147,6 +149,48 @@ void ProxClass::pathlossChanged(int value)
 	proximity->SetProperty("PathLossAlertLevel", QDBusVariant(arg));
 }
 
+void ProxClass::linkLossChanged(int value)
+{
+	QVariant arg;
+
+	switch (value) {
+	case 0:
+		arg = QString("none");
+		break;
+	case 1:
+		arg = QString("mild");
+		break;
+	case 2:
+		arg = QString("high");
+		break;
+	}
+
+	qWarning() << arg.toString();
+
+	proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
+}
+
+void ProxClass::findMeChanged(int value)
+{
+	QVariant arg;
+
+	switch (value) {
+	case 0:
+		arg = QString("none");
+		break;
+	case 1:
+		arg = QString("mild");
+		break;
+	case 2:
+		arg = QString("high");
+		break;
+	}
+
+	qWarning() << arg.toString();
+
+	proximity->SetProperty("FindMeAlertLevel", QDBusVariant(arg));
+}
+
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
@@ -176,6 +220,14 @@ int main(int argc, char **argv)
 	QObject::connect(
 		monitor, SIGNAL(pathlossChanged(int)),
 		proxClass, SLOT(pathlossChanged(int)));
+
+	QObject::connect(
+		monitor, SIGNAL(linkLossChanged(int)),
+		proxClass, SLOT(linkLossChanged(int)));
+
+	QObject::connect(
+		monitor, SIGNAL(findMeChanged(int)),
+		proxClass, SLOT(findMeChanged(int)));
 
 	QObject::connect(
 		proxClass, SIGNAL(alarmCalled(QString)),

@@ -34,6 +34,24 @@ Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
 	slidersBox->addWidget(label, 1, 0, Qt::AlignRight);
 	slidersBox->addWidget(pathloss, 1, 1);
 
+	label = new QLabel("LinkLoss Alert Level:");
+	linkLoss = new QSlider(Qt::Horizontal);
+	linkLoss->setMaximum(2);
+	connect(linkLoss, SIGNAL(valueChanged(int)),
+		this, SIGNAL(linkLossChanged(int)));
+
+	slidersBox->addWidget(label, 2, 0, Qt::AlignRight);
+	slidersBox->addWidget(linkLoss, 2, 1);
+
+	label = new QLabel("FindMe Alert Level:");
+	findMe = new QSlider(Qt::Horizontal);
+	findMe->setMaximum(2);
+	connect(findMe, SIGNAL(valueChanged(int)),
+		this, SIGNAL(findMeChanged(int)));
+
+	slidersBox->addWidget(label, 3, 0, Qt::AlignRight);
+	slidersBox->addWidget(findMe, 3, 1);
+
 	setLayout(slidersBox);
 
 

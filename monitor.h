@@ -13,6 +13,8 @@ public:
 signals:
 	void thresholdChanged(int value);
 	void pathlossChanged(int value);
+	void linkLossChanged(int value);
+	void findMeChanged(int value);
 
 public slots:
 	void playAlarm(QString type);
@@ -21,6 +23,8 @@ public slots:
 private:
 	QSlider *threshold;
 	QSlider *pathloss;
+	QSlider *linkLoss;
+	QSlider *findMe;
 
 	Phonon::MediaObject *mildAlarm;
 	Phonon::MediaObject *highAlarm;
