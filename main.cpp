@@ -202,15 +202,6 @@ int main(int argc, char **argv)
 	ProxClass *proxClass = new ProxClass(hci, dba);
 	Q_UNUSED(proxClass);
 
-
-/*
-	QMapIterator<QString, QVariant> m(properties.value());
-	while (m.hasNext())
-		qDebug() << m.key() << m.value();
-
-
-		*/
-
 	Monitor *monitor = new Monitor();
 
 	QObject::connect(
