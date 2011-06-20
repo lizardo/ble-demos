@@ -68,10 +68,20 @@ void Monitor::playAlarm(QString type)
 {
 	static int i = 0;
 	QString mildFile("./mild.wav");
+	QString highFile("./high.wav");
 	Q_UNUSED(type);
 
-	if (type == "PathLoss")
-		mildAlarm->setCurrentSource(mildFile);
+	if (type == "PathLoss") {
+		if (pathloss->value() == 1)
+			mildAlarm->setCurrentSource(mildFile);
+		else if (pathloss->value() == 2)
+			mildAlarm->setCurrentSource(highFile);
+	} else if (type == "Threshold") {
+		if (threshold->value() == 1)
+			mildAlarm->setCurrentSource(mildFile);
+		else if (threshold->value() == 2)
+			mildAlarm->setCurrentSource(highFile);
+	}
 	mildAlarm->play();
 
 	i++;

@@ -105,6 +105,8 @@ void ProxClass::propertyChanged(const QString &property, const QDBusVariant &val
 
 	if (property == "PathLoss")
 		emit alarmCalled(property);
+	if (property == "ThresholdAlert")
+		emit alarmCalled(property);
 }
 
 void ProxClass::thresholdChanged(int value)
