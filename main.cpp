@@ -196,12 +196,16 @@ void ProxClass::findMeChanged(int value)
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
-	QString hci(argv[1]);
-	QString dba(argv[2]);
+	QStringList args = app.arguments();
+
+	if (args.length() < 3) {
+		qWarning() << "Usage:" << args.at(0) << "<hciX>" "<remote address>";
+		return 0;
+	}
 
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
-	ProxClass *proxClass = new ProxClass(hci, dba);
+	ProxClass *proxClass = new ProxClass(args.at(1), args.at(2));
 	Q_UNUSED(proxClass);
 
 	Monitor *monitor = new Monitor();
