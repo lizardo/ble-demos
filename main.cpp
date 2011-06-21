@@ -8,7 +8,7 @@
 #include "adapter.h"
 #include "proximity.h"
 
-#include "monitor.h"
+#include "monitorview.h"
 
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
@@ -208,29 +208,29 @@ int main(int argc, char **argv)
 	ProxClass *proxClass = new ProxClass(args.at(1), args.at(2));
 	Q_UNUSED(proxClass);
 
-	Monitor *monitor = new Monitor();
+	MonitorView *monitorView = new MonitorView();
 
 	QObject::connect(
-		monitor, SIGNAL(thresholdChanged(int)),
+		monitorView, SIGNAL(thresholdChanged(int)),
 		proxClass, SLOT(thresholdChanged(int)));
 
 	QObject::connect(
-		monitor, SIGNAL(pathlossChanged(int)),
+		monitorView, SIGNAL(pathlossChanged(int)),
 		proxClass, SLOT(pathlossChanged(int)));
 
 	QObject::connect(
-		monitor, SIGNAL(linkLossChanged(int)),
+		monitorView, SIGNAL(linkLossChanged(int)),
 		proxClass, SLOT(linkLossChanged(int)));
 
 	QObject::connect(
-		monitor, SIGNAL(findMeChanged(int)),
+		monitorView, SIGNAL(findMeChanged(int)),
 		proxClass, SLOT(findMeChanged(int)));
 
 	QObject::connect(
 		proxClass, SIGNAL(alarmCalled(QString)),
-		monitor, SLOT(playAlarm(QString)));
+		monitorView, SLOT(playAlarm(QString)));
 
-	monitor->show();
+	monitorView->show();
 	app.exec();
 }
 

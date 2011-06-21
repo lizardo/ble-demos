@@ -4,11 +4,11 @@
 
 #include <Phonon/MediaObject>
 
-class Monitor: public QWidget
+class MonitorView: public QWidget
 {
 	Q_OBJECT
 public:
-	Monitor(QWidget *parent = 0, Qt::WindowFlags f = 0);
+	MonitorView(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
 signals:
 	void thresholdChanged(int value);

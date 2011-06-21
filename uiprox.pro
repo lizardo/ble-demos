@@ -15,11 +15,11 @@ SOURCES += main.cpp \
            adapter.cpp \
            device.cpp \
            proximity.cpp \
-	   monitor.cpp \
+	   monitorview.cpp \
 
 HEADERS += types.h \
            manager.h \
            adapter.h \
            device.h \
            proximity.h \
-           monitor.h \
+           monitorview.h \

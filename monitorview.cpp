@@ -6,9 +6,9 @@
 
 #include <Phonon/MediaSource>
 
-#include "monitor.h"
+#include "monitorview.h"
 
-Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
+MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent, f)
 {
 	QGridLayout *slidersBox;
@@ -64,7 +64,7 @@ Monitor::Monitor(QWidget *parent, Qt::WindowFlags f)
 	mildAlarm = Phonon::createPlayer(Phonon::NotificationCategory);
 }
 
-void Monitor::playAlarm(QString type)
+void MonitorView::playAlarm(QString type)
 {
 	static int i = 0;
 	QString mildFile("./mild.wav");
@@ -87,7 +87,7 @@ void Monitor::playAlarm(QString type)
 	i++;
 }
 
-void Monitor::playFinished()
+void MonitorView::playFinished()
 {
 	static int i = 0;
 	qWarning() << i << "finished" << mildAlarm->state() << mildAlarm->queue().count();
