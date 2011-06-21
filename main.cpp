@@ -13,11 +13,11 @@
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
-class ProxClass: public QObject
+class Monitor: public QObject
 {
 	Q_OBJECT
 public:
-	ProxClass(QString adapter, QString bda);
+	Monitor(QString adapter, QString bda);
 
 signals:
 	void alarmCalled(QString type);
@@ -35,7 +35,7 @@ private:
 	org::bluez::Proximity *proximity;
 };
 
-ProxClass::ProxClass(QString hci, QString dba)
+Monitor::Monitor(QString hci, QString dba)
 {
 	qWarning() << hci << dba;
 
@@ -98,7 +98,7 @@ ProxClass::ProxClass(QString hci, QString dba)
 
 }
 
-void ProxClass::propertyChanged(const QString &property, const QDBusVariant &value)
+void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
 	Q_UNUSED(value);
 	qWarning() << property;
@@ -109,7 +109,7 @@ void ProxClass::propertyChanged(const QString &property, const QDBusVariant &val
 		emit alarmCalled(property);
 }
 
-void ProxClass::thresholdChanged(int value)
+void Monitor::thresholdChanged(int value)
 {
 	QVariant arg;
 
@@ -130,7 +130,7 @@ void ProxClass::thresholdChanged(int value)
 	proximity->SetProperty("Threshold", QDBusVariant(arg));
 }
 
-void ProxClass::pathlossChanged(int value)
+void Monitor::pathlossChanged(int value)
 {
 	QVariant arg;
 
@@ -151,7 +151,7 @@ void ProxClass::pathlossChanged(int value)
 	proximity->SetProperty("PathLossAlertLevel", QDBusVariant(arg));
 }
 
-void ProxClass::linkLossChanged(int value)
+void Monitor::linkLossChanged(int value)
 {
 	QVariant arg;
 
@@ -172,7 +172,7 @@ void ProxClass::linkLossChanged(int value)
 	proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
 }
 
-void ProxClass::findMeChanged(int value)
+void Monitor::findMeChanged(int value)
 {
 	QVariant arg;
 
@@ -205,29 +205,29 @@ int main(int argc, char **argv)
 
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
-	ProxClass *proxClass = new ProxClass(args.at(1), args.at(2));
-	Q_UNUSED(proxClass);
+	Monitor *monitor = new Monitor(args.at(1), args.at(2));
+	Q_UNUSED(monitor);
 
 	MonitorView *monitorView = new MonitorView();
 
 	QObject::connect(
 		monitorView, SIGNAL(thresholdChanged(int)),
-		proxClass, SLOT(thresholdChanged(int)));
+		monitor, SLOT(thresholdChanged(int)));
 
 	QObject::connect(
 		monitorView, SIGNAL(pathlossChanged(int)),
-		proxClass, SLOT(pathlossChanged(int)));
+		monitor, SLOT(pathlossChanged(int)));
 
 	QObject::connect(
 		monitorView, SIGNAL(linkLossChanged(int)),
-		proxClass, SLOT(linkLossChanged(int)));
+		monitor, SLOT(linkLossChanged(int)));
 
 	QObject::connect(
 		monitorView, SIGNAL(findMeChanged(int)),
-		proxClass, SLOT(findMeChanged(int)));
+		monitor, SLOT(findMeChanged(int)));
 
 	QObject::connect(
-		proxClass, SIGNAL(alarmCalled(QString)),
+		monitor, SIGNAL(alarmCalled(QString)),
 		monitorView, SLOT(playAlarm(QString)));
 
 	monitorView->show();
