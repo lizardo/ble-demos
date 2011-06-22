@@ -16,6 +16,7 @@ SOURCES += main.cpp \
            device.cpp \
            proximity.cpp \
 	   monitorview.cpp \
+	   monitor.cpp \
 
 HEADERS += types.h \
            manager.h \
@@ -23,3 +24,4 @@ HEADERS += types.h \
            device.h \
            proximity.h \
            monitorview.h \
+	   monitor.h \

@@ -19,6 +19,9 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include <QVariantMap>
+#include <QMap>
+
 typedef QMap<uint, QString> ServiceMap;
 Q_DECLARE_METATYPE(ServiceMap)
 
