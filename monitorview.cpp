@@ -66,7 +66,6 @@ MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 
 void MonitorView::playAlarm(QString type)
 {
-	static int i = 0;
 	QString mildFile("./mild.wav");
 	QString highFile("./high.wav");
 	Q_UNUSED(type);
@@ -83,14 +82,9 @@ void MonitorView::playAlarm(QString type)
 			mildAlarm->setCurrentSource(highFile);
 	}
 	mildAlarm->play();
-
-	i++;
 }
 
 void MonitorView::playFinished()
 {
-	static int i = 0;
-	qWarning() << i << "finished" << mildAlarm->state() << mildAlarm->queue().count();
-
-	i++;
+	qWarning() << "finished" << mildAlarm->state() << mildAlarm->queue().count();
 }
