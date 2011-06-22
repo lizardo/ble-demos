@@ -8,6 +8,9 @@
 
 #include "monitorview.h"
 
+#define ALARM_MILD "./mild.wav"
+#define ALARM_HIGH "./high.wav"
+
 MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent, f)
 {
@@ -55,8 +58,7 @@ MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 	setLayout(slidersBox);
 
 
-	mildAlarm = Phonon::createPlayer(Phonon::MusicCategory,
-					Phonon::MediaSource("./mild.wav"));
+	mildAlarm = Phonon::createPlayer(Phonon::MusicCategory);
 
 	QObject::connect(mildAlarm, SIGNAL(finished()), this,
 	SLOT(playFinished()));
@@ -66,8 +68,8 @@ MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 
 void MonitorView::playAlarm(QString type)
 {
-	QString mildFile("./mild.wav");
-	QString highFile("./high.wav");
+	QString mildFile(ALARM_MILD);
+	QString highFile(ALARM_HIGH);
 	Q_UNUSED(type);
 
 	if (type == "PathLoss") {
