@@ -3,6 +3,7 @@
 #include <QtDBus>
 
 #include "monitor.h"
+#include "device.h"
 #include "types.h"
 
 typedef QMap<QString, QVariant> PropertyMap;
@@ -42,6 +43,8 @@ Monitor::Monitor(QString hci, QString dba)
 
 	qDebug() << obReply.value().path();
 
+	init2();
+
 	qWarning() << "Checking proximity capacity...";
 	proximity = new org::bluez::Proximity(BLUEZ_SERVICE_NAME,
 				obReply.value().path(), dbus);
@@ -69,6 +72,66 @@ Monitor::Monitor(QString hci, QString dba)
 	foreach (QString k, properties.value().keys())
 		qDebug() << k;
 
+}
+
+Monitor::~Monitor()
+{
+	while (!devices.isEmpty())
+		delete devices.takeFirst();
+}
+
+void Monitor::checkServices(QString path)
+{
+	org::bluez::Device *device =
+			new org::bluez::Device(BLUEZ_SERVICE_NAME, path,
+					QDBusConnection::systemBus());
+
+	QDBusReply<PropertyMap> properties = device->GetProperties();
+
+	QVariant uuids = properties.value().value("UUIDs");
+
+	foreach (QString uuid, uuids.toStringList())
+		qDebug() << uuid;
+
+	if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
+		devices.append(device);
+		return;
+	}
+
+	delete device;
+}
+
+void Monitor::init2(void)
+{
+	QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
+	QList<QDBusObjectPath> list;
+
+	qDebug() << "init2";
+
+	if (!slReply.isValid()) {
+		qWarning() << "Error: " << slReply.error();
+		return;
+	}
+
+	list = slReply.value();
+	for (int i = 0; i < list.count(); i++) {
+		checkServices(list.at(i).path());
+		qWarning() <<  list.at(i).path();
+	}
+
+}
+
+QStringList Monitor::devicesName()
+{
+	QStringList list;
+
+	foreach(org::bluez::Device *d, devices) {
+		QDBusReply<PropertyMap> properties = d->GetProperties();
+
+		list << QVariant(properties.value().value("Name")).toString();
+	}
+
+	return list;
 }
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)

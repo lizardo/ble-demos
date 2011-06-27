@@ -22,6 +22,8 @@
 #include <QVariantMap>
 #include <QMap>
 
+#define IMMEDIATE_ALERT_UUID "00001802-0000-1000-8000-00805f9b34fb"
+
 typedef QMap<uint, QString> ServiceMap;
 Q_DECLARE_METATYPE(ServiceMap)
 
