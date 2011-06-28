@@ -17,9 +17,16 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	QGridLayout *slidersBox;
 	QLabel *label;
 
-	setModel(monitor);
-
 	slidersBox = new QGridLayout(this);
+
+	label = new QLabel("Device:");
+	devices = new QListView();
+	devicesModel = new QStringListModel();
+	connect(devices, SIGNAL(clicked(const QModelIndex)),
+		this, SLOT(devicesClicked(QModelIndex)));
+
+	slidersBox->addWidget(label, 0, 0, Qt::AlignRight);
+	slidersBox->addWidget(devices, 0, 1);
 
 	label = new QLabel("Threshold:");
 	threshold = new QSlider(Qt::Horizontal);
@@ -27,8 +34,8 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	connect(threshold, SIGNAL(valueChanged(int)),
 		this, SIGNAL(thresholdChanged(int)));
 
-	slidersBox->addWidget(label, 0, 0, Qt::AlignRight);
-	slidersBox->addWidget(threshold, 0, 1);
+	slidersBox->addWidget(label, 1, 0, Qt::AlignRight);
+	slidersBox->addWidget(threshold, 1, 1);
 
 	label = new QLabel("PathLoss Alert Level:");
 	pathloss = new QSlider(Qt::Horizontal);
@@ -36,8 +43,8 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	connect(pathloss, SIGNAL(valueChanged(int)),
 		this, SIGNAL(pathlossChanged(int)));
 
-	slidersBox->addWidget(label, 1, 0, Qt::AlignRight);
-	slidersBox->addWidget(pathloss, 1, 1);
+	slidersBox->addWidget(label, 2, 0, Qt::AlignRight);
+	slidersBox->addWidget(pathloss, 2, 1);
 
 	label = new QLabel("LinkLoss Alert Level:");
 	linkLoss = new QSlider(Qt::Horizontal);
@@ -45,8 +52,8 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	connect(linkLoss, SIGNAL(valueChanged(int)),
 		this, SIGNAL(linkLossChanged(int)));
 
-	slidersBox->addWidget(label, 2, 0, Qt::AlignRight);
-	slidersBox->addWidget(linkLoss, 2, 1);
+	slidersBox->addWidget(label, 3, 0, Qt::AlignRight);
+	slidersBox->addWidget(linkLoss, 3, 1);
 
 	label = new QLabel("FindMe Alert Level:");
 	findMe = new QSlider(Qt::Horizontal);
@@ -54,11 +61,10 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	connect(findMe, SIGNAL(valueChanged(int)),
 		this, SIGNAL(findMeChanged(int)));
 
-	slidersBox->addWidget(label, 3, 0, Qt::AlignRight);
-	slidersBox->addWidget(findMe, 3, 1);
+	slidersBox->addWidget(label, 4, 0, Qt::AlignRight);
+	slidersBox->addWidget(findMe, 4, 1);
 
 	setLayout(slidersBox);
-
 
 	mildAlarm = Phonon::createPlayer(Phonon::MusicCategory);
 
@@ -66,6 +72,8 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	SLOT(playFinished()));
 
 	mildAlarm = Phonon::createPlayer(Phonon::NotificationCategory);
+
+	setModel(monitor);
 }
 
 void MonitorView::setModel(Monitor *monitor)
@@ -94,6 +102,15 @@ void MonitorView::setModel(Monitor *monitor)
 	QObject::connect(
 		model, SIGNAL(alarmCalled(QString)),
 		this, SLOT(playAlarm(QString)));
+
+
+	devicesModel->setStringList(model->devicesName());
+	devices->setModel(devicesModel);
+}
+
+void MonitorView::devicesClicked(QModelIndex index)
+{
+	qWarning() << index.row();
 }
 
 void MonitorView::playAlarm(QString type)

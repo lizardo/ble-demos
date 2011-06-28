@@ -1,6 +1,8 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QSlider>
+#include <QListView>
+#include <QStringListModel>
 
 #include <Phonon/MediaObject>
 
@@ -24,6 +26,9 @@ public slots:
 	void playAlarm(QString type);
 	void playFinished();
 
+private slots:
+	void devicesClicked(QModelIndex index);
+
 private:
 	Monitor *model;
 
@@ -31,6 +36,9 @@ private:
 	QSlider *pathloss;
 	QSlider *linkLoss;
 	QSlider *findMe;
+
+	QListView *devices;
+	QStringListModel *devicesModel;
 
 	Phonon::MediaObject *mildAlarm;
 	Phonon::MediaObject *highAlarm;
