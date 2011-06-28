@@ -11,8 +11,6 @@ Q_DECLARE_METATYPE(PropertyMap)
 
 Monitor::Monitor(QString hci)
 {
-	qWarning() << hci;
-
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
 	manager = new org::bluez::Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH,
@@ -62,17 +60,6 @@ void Monitor::setDevice(int index)
 		qDebug() << "Error: " << properties.error();
 		exit(1);
 	}
-
-	QMap<QString, QVariant> p = properties.value();
-
-	qWarning() << "LinsLoss:" << p.value("LinkLossAlertLevel").toString();
-
-	qWarning() << "PathLoss:" << p.value("PathLossAlertLevel").toString();
-
-	qWarning() << "Threshold:" << p.value("Threshold").toString();
-
-	foreach (QString k, properties.value().keys())
-		qDebug() << k;
 }
 
 void Monitor::checkServices(QString path)
@@ -84,9 +71,6 @@ void Monitor::checkServices(QString path)
 	QDBusReply<PropertyMap> properties = device->GetProperties();
 
 	QVariant uuids = properties.value().value("UUIDs");
-
-	foreach (QString uuid, uuids.toStringList())
-		qDebug() << uuid;
 
 	if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
 		devices.append(device);
@@ -101,8 +85,6 @@ void Monitor::init2(void)
 	QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
 	QList<QDBusObjectPath> list;
 
-	qDebug() << "init2";
-
 	if (!slReply.isValid()) {
 		qWarning() << "Error: " << slReply.error();
 		return;
@@ -113,7 +95,6 @@ void Monitor::init2(void)
 		checkServices(list.at(i).path());
 		qWarning() <<  list.at(i).path();
 	}
-
 }
 
 QStringList Monitor::devicesName()

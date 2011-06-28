@@ -23,7 +23,6 @@ int main(int argc, char **argv)
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
 	Monitor *monitor = new Monitor(args.at(1));
-	Q_UNUSED(monitor);
 
 	MonitorView *monitorView = new MonitorView(monitor);
 
