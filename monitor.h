@@ -7,6 +7,9 @@
 #include "adapter.h"
 #include "proximity.h"
 
+#ifndef MONITOR_H
+#define MONITOR_H
+
 using namespace org::bluez;
 
 class Monitor: public QObject
@@ -37,3 +40,5 @@ private:
 	void init2(void);
 	void checkServices(QString path);
 };
+
+#endif
