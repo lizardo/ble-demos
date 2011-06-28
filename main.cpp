@@ -25,27 +25,7 @@ int main(int argc, char **argv)
 	Monitor *monitor = new Monitor(args.at(1), args.at(2));
 	Q_UNUSED(monitor);
 
-	MonitorView *monitorView = new MonitorView();
-
-	QObject::connect(
-		monitorView, SIGNAL(thresholdChanged(int)),
-		monitor, SLOT(thresholdChanged(int)));
-
-	QObject::connect(
-		monitorView, SIGNAL(pathlossChanged(int)),
-		monitor, SLOT(pathlossChanged(int)));
-
-	QObject::connect(
-		monitorView, SIGNAL(linkLossChanged(int)),
-		monitor, SLOT(linkLossChanged(int)));
-
-	QObject::connect(
-		monitorView, SIGNAL(findMeChanged(int)),
-		monitor, SLOT(findMeChanged(int)));
-
-	QObject::connect(
-		monitor, SIGNAL(alarmCalled(QString)),
-		monitorView, SLOT(playAlarm(QString)));
+	MonitorView *monitorView = new MonitorView(monitor);
 
 	monitorView->show();
 	app.exec();

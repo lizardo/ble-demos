@@ -4,11 +4,15 @@
 
 #include <Phonon/MediaObject>
 
+#include "monitor.h"
+
 class MonitorView: public QWidget
 {
 	Q_OBJECT
 public:
-	MonitorView(QWidget *parent = 0, Qt::WindowFlags f = 0);
+	MonitorView(Monitor *monitor = NULL, QWidget *parent = 0,
+						Qt::WindowFlags f = 0);
+	void setModel(Monitor *monitor);
 
 signals:
 	void thresholdChanged(int value);
@@ -21,6 +25,8 @@ public slots:
 	void playFinished();
 
 private:
+	Monitor *model;
+
 	QSlider *threshold;
 	QSlider *pathloss;
 	QSlider *linkLoss;

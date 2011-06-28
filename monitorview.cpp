@@ -11,11 +11,13 @@
 #define ALARM_MILD "./mild.wav"
 #define ALARM_HIGH "./high.wav"
 
-MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
+MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent, f)
 {
 	QGridLayout *slidersBox;
 	QLabel *label;
+
+	setModel(monitor);
 
 	slidersBox = new QGridLayout(this);
 
@@ -64,6 +66,34 @@ MonitorView::MonitorView(QWidget *parent, Qt::WindowFlags f)
 	SLOT(playFinished()));
 
 	mildAlarm = Phonon::createPlayer(Phonon::NotificationCategory);
+}
+
+void MonitorView::setModel(Monitor *monitor)
+{
+	model = monitor;
+
+	if (!monitor)
+		return;
+
+	QObject::connect(
+		this, SIGNAL(thresholdChanged(int)),
+		model, SLOT(thresholdChanged(int)));
+
+	QObject::connect(
+		this, SIGNAL(pathlossChanged(int)),
+		model, SLOT(pathlossChanged(int)));
+
+	QObject::connect(
+		this, SIGNAL(linkLossChanged(int)),
+		model, SLOT(linkLossChanged(int)));
+
+	QObject::connect(
+		this, SIGNAL(findMeChanged(int)),
+		model, SLOT(findMeChanged(int)));
+
+	QObject::connect(
+		model, SIGNAL(alarmCalled(QString)),
+		this, SLOT(playAlarm(QString)));
 }
 
 void MonitorView::playAlarm(QString type)
