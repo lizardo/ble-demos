@@ -9,9 +9,9 @@
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
-Monitor::Monitor(QString hci, QString dba)
+Monitor::Monitor(QString hci)
 {
-	qWarning() << hci << dba;
+	qWarning() << hci;
 
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
@@ -33,21 +33,23 @@ Monitor::Monitor(QString hci, QString dba)
 	adapter = new org::bluez::Adapter(BLUEZ_SERVICE_NAME,
 						obReply.value().path(), dbus);
 
-	qWarning() << "Looking for device... ";
-	obReply = adapter->FindDevice(dba);
-
-	if (!obReply.isValid()) {
-		qWarning() << "Error:" << obReply.error();
-		exit(1);
-	}
-
-	qDebug() << obReply.value().path();
-
 	init2();
+}
+
+Monitor::~Monitor()
+{
+	while (!devices.isEmpty())
+		delete devices.takeFirst();
+}
+
+void Monitor::setDevice(int index)
+{
+	qWarning() << "Looking for device... ";
+	device = devices.at(index);
 
 	qWarning() << "Checking proximity capacity...";
 	proximity = new org::bluez::Proximity(BLUEZ_SERVICE_NAME,
-				obReply.value().path(), dbus);
+				device->path(), QDBusConnection::systemBus());
 
 	QObject::connect(
 		proximity,
@@ -71,13 +73,6 @@ Monitor::Monitor(QString hci, QString dba)
 
 	foreach (QString k, properties.value().keys())
 		qDebug() << k;
-
-}
-
-Monitor::~Monitor()
-{
-	while (!devices.isEmpty())
-		delete devices.takeFirst();
 }
 
 void Monitor::checkServices(QString path)

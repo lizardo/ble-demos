@@ -110,7 +110,7 @@ void MonitorView::setModel(Monitor *monitor)
 
 void MonitorView::devicesClicked(QModelIndex index)
 {
-	qWarning() << index.row();
+	model->setDevice(index.row());
 }
 
 void MonitorView::playAlarm(QString type)

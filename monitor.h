@@ -16,10 +16,11 @@ class Monitor: public QObject
 {
 	Q_OBJECT
 public:
-	Monitor(QString adapter, QString bda);
+	Monitor(QString hci);
 	~Monitor();
 
 	QStringList devicesName();
+	void setDevice(int index);
 
 signals:
 	void alarmCalled(QString type);
@@ -35,6 +36,7 @@ private:
 	org::bluez::Manager *manager;
 	org::bluez::Adapter *adapter;
 	org::bluez::Proximity *proximity;
+	Device *device;
 	QList<Device *> devices;
 
 	void init2(void);
