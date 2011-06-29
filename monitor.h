@@ -39,7 +39,7 @@ private:
 	Device *device;
 	QList<Device *> devices;
 
-	void init2(void);
+	void lookDevices(void);
 	void checkServices(QString path);
 };
 

@@ -31,7 +31,9 @@ Monitor::Monitor(QString hci)
 	adapter = new org::bluez::Adapter(BLUEZ_SERVICE_NAME,
 						obReply.value().path(), dbus);
 
-	init2();
+	lookDevices();
+
+	qWarning() << "Ready.";
 }
 
 Monitor::~Monitor()
@@ -42,7 +44,6 @@ Monitor::~Monitor()
 
 void Monitor::setDevice(int index)
 {
-	qWarning() << "Looking for device... ";
 	device = devices.at(index);
 
 	qWarning() << "Checking proximity capacity...";
@@ -80,8 +81,9 @@ void Monitor::checkServices(QString path)
 	delete device;
 }
 
-void Monitor::init2(void)
+void Monitor::lookDevices(void)
 {
+	qWarning() << "Looking for devices... ";
 	QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
 	QList<QDBusObjectPath> list;
 
@@ -93,7 +95,6 @@ void Monitor::init2(void)
 	list = slReply.value();
 	for (int i = 0; i < list.count(); i++) {
 		checkServices(list.at(i).path());
-		qWarning() <<  list.at(i).path();
 	}
 }
 
