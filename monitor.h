@@ -34,9 +34,9 @@ public slots:
 	void findMeChanged(int value);
 
 private:
-	org::bluez::Manager *manager;
-	org::bluez::Adapter *adapter;
-	org::bluez::Proximity *proximity;
+	Manager *manager;
+	Adapter *adapter;
+	Proximity *proximity;
 	Device *device;
 	QList<Device *> devices;
 

@@ -13,7 +13,7 @@ Monitor::Monitor(QString hci)
 {
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
-	manager = new org::bluez::Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH,
+	manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH,
 						dbus);
 
 	qWarning() << "Looking for adapter...";
@@ -28,7 +28,7 @@ Monitor::Monitor(QString hci)
 
 	qDebug() << obReply.value().path();
 
-	adapter = new org::bluez::Adapter(BLUEZ_SERVICE_NAME,
+	adapter = new Adapter(BLUEZ_SERVICE_NAME,
 						obReply.value().path(), dbus);
 
 	lookDevices();
@@ -47,7 +47,7 @@ void Monitor::setDevice(int index)
 	device = devices.at(index);
 
 	qWarning() << "Checking proximity capacity...";
-	proximity = new org::bluez::Proximity(BLUEZ_SERVICE_NAME,
+	proximity = new Proximity(BLUEZ_SERVICE_NAME,
 				device->path(), QDBusConnection::systemBus());
 
 	QObject::connect(
@@ -69,8 +69,7 @@ void Monitor::setDevice(int index)
 
 void Monitor::checkServices(QString path)
 {
-	org::bluez::Device *device =
-			new org::bluez::Device(BLUEZ_SERVICE_NAME, path,
+	Device *device = new Device(BLUEZ_SERVICE_NAME, path,
 					QDBusConnection::systemBus());
 
 	QDBusReply<PropertyMap> properties = device->GetProperties();
@@ -106,7 +105,7 @@ QStringList Monitor::devicesName()
 {
 	QStringList list;
 
-	foreach(org::bluez::Device *d, devices) {
+	foreach(Device *d, devices) {
 		QDBusReply<PropertyMap> properties = d->GetProperties();
 
 		list << QVariant(properties.value().value("Name")).toString();
