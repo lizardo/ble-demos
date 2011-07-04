@@ -46,6 +46,7 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	slidersBox->addWidget(label, 2, 0, Qt::AlignRight);
 	slidersBox->addWidget(pathloss, 2, 1);
 
+/*
 	label = new QLabel("LinkLoss Alert Level:");
 	linkLoss = new QSlider(Qt::Horizontal);
 	linkLoss->setMaximum(2);
@@ -63,6 +64,8 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 
 	slidersBox->addWidget(label, 4, 0, Qt::AlignRight);
 	slidersBox->addWidget(findMe, 4, 1);
+
+*/
 
 	setLayout(slidersBox);
 
