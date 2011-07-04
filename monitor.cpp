@@ -61,6 +61,10 @@ void Monitor::setDevice(int index)
 		qDebug() << "Error: " << properties.error();
 		exit(1);
 	}
+
+	QMap<QString, QVariant> p = properties.value();
+	foreach (QString k, properties.value().keys())
+		propertyChanged(k, QDBusVariant(p.value(k)));
 }
 
 void Monitor::checkServices(QString path)
@@ -118,8 +122,10 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 
 	if (property == "PathLoss")
 		emit alarmCalled(property);
-	if (property == "ThresholdAlert")
+	else if (property == "ThresholdAlert")
 		emit alarmCalled(property);
+	else
+		emit propertyValue(property, value.variant().toString());
 }
 
 void Monitor::thresholdChanged(int value)

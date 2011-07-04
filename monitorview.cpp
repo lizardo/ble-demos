@@ -86,6 +86,9 @@ void MonitorView::setModel(Monitor *monitor)
 	if (!monitor)
 		return;
 
+	pathloss->setEnabled(false);
+	threshold->setEnabled(false);
+
 	QObject::connect(
 		this, SIGNAL(thresholdChanged(int)),
 		model, SLOT(thresholdChanged(int)));
@@ -106,9 +109,34 @@ void MonitorView::setModel(Monitor *monitor)
 		model, SIGNAL(alarmCalled(QString)),
 		this, SLOT(playAlarm(QString)));
 
+	QObject::connect(
+		model, SIGNAL(propertyValue(QString, QString)),
+		this, SLOT(propertyValue(QString, QString)));
+
 
 	devicesModel->setStringList(model->devicesName());
 	devices->setModel(devicesModel);
+}
+
+void MonitorView::propertyValue(QString property, QString value)
+{
+	if (property == "Threshold") {
+		threshold->setEnabled(true);
+		if (value == "low")
+			threshold->setValue(0);
+		else if (value == "medium")
+			threshold->setValue(1);
+		else if (value == "high")
+			threshold->setValue(2);
+	} else if (property == "PathLossAlertLevel") {
+		pathloss->setEnabled(true);
+		if (value == "none")
+			pathloss->setValue(0);
+		else if (value == "mild")
+			pathloss->setValue(1);
+		else if (value == "high")
+			pathloss->setValue(2);
+	}
 }
 
 void MonitorView::devicesClicked(QModelIndex index)

@@ -25,6 +25,7 @@ signals:
 public slots:
 	void playAlarm(QString type);
 	void playFinished();
+	void propertyValue(QString property, QString value);
 
 private slots:
 	void devicesClicked(QModelIndex index);
