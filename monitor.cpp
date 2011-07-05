@@ -10,36 +10,57 @@ typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
 Monitor::Monitor(QString hci)
+	: manager(NULL), adapter(NULL), device(NULL)
 {
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
 	manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH,
 						dbus);
 
-	qWarning() << "Looking for adapter...";
-	QDBusReply<QDBusObjectPath> obReply = manager->FindAdapter(hci);
-	if (!obReply.isValid())
-		obReply = manager->DefaultAdapter();
-
-	if (!obReply.isValid()) {
-		qWarning() << "Error:" << obReply.error();
-		exit(1);
-	}
-
-	qDebug() << obReply.value().path();
-
-	adapter = new Adapter(BLUEZ_SERVICE_NAME,
-						obReply.value().path(), dbus);
-
-	lookDevices();
-
-	qWarning() << "Ready.";
+	setAdapter(hci);
 }
 
 Monitor::~Monitor()
 {
+	destroyDevices();
+}
+
+void Monitor::destroyDevices()
+{
 	while (!devices.isEmpty())
 		delete devices.takeFirst();
+}
+
+void Monitor::setAdapter(QString hci)
+{
+	if (manager == NULL) {
+		qWarning() << "Invalid manager..";
+		return;
+	}
+
+	if (adapter) {
+		destroyDevices();
+		delete adapter;
+	}
+
+	qWarning() << "Looking for adapter...";
+	QDBusReply<QDBusObjectPath> obReply;
+	if (hci.isEmpty())
+		obReply = manager->DefaultAdapter();
+	else
+		obReply = manager->FindAdapter(hci);
+
+	if (!obReply.isValid()) {
+		qWarning() << "Error:" << obReply.error();
+		return;
+	}
+
+	qDebug() << obReply.value().path();
+
+	adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
+						QDBusConnection::systemBus());
+
+	lookDevices();
 }
 
 void Monitor::setDevice(int index)

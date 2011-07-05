@@ -16,10 +16,11 @@ class Monitor: public QObject
 {
 	Q_OBJECT
 public:
-	Monitor(QString hci);
+	Monitor(QString hci = QString());
 	~Monitor();
 
 	QStringList devicesName();
+	void setAdapter(QString hci);
 	void setDevice(int index);
 
 signals:
@@ -41,6 +42,7 @@ private:
 	QList<Device *> devices;
 
 	void lookDevices(void);
+	void destroyDevices();
 	void checkServices(QString path);
 };
 
