@@ -137,12 +137,9 @@ QStringList Monitor::devicesName()
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
-	Q_UNUSED(value);
 	qWarning() << property;
 
-	if (property == "PathLoss")
-		emit alarmCalled(property);
-	else if (property == "ThresholdAlert")
+	if (property == "ThresholdAlert")
 		emit alarmCalled(property);
 	else
 		emit propertyValue(property, value.variant().toString());
