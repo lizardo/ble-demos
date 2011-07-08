@@ -46,7 +46,6 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	slidersBox->addWidget(label, 2, 0, Qt::AlignRight);
 	slidersBox->addWidget(pathloss, 2, 1);
 
-/*
 	label = new QLabel("LinkLoss Alert Level:");
 	linkLoss = new QSlider(Qt::Horizontal);
 	linkLoss->setMaximum(2);
@@ -56,6 +55,7 @@ MonitorView::MonitorView(Monitor *monitor, QWidget *parent, Qt::WindowFlags f)
 	slidersBox->addWidget(label, 3, 0, Qt::AlignRight);
 	slidersBox->addWidget(linkLoss, 3, 1);
 
+/*
 	label = new QLabel("FindMe Alert Level:");
 	findMe = new QSlider(Qt::Horizontal);
 	findMe->setMaximum(2);
@@ -88,6 +88,7 @@ void MonitorView::setModel(Monitor *monitor)
 
 	pathloss->setEnabled(false);
 	threshold->setEnabled(false);
+	linkLoss->setEnabled(false);
 
 	QObject::connect(
 		this, SIGNAL(thresholdChanged(int)),
@@ -136,6 +137,14 @@ void MonitorView::propertyValue(QString property, QString value)
 			pathloss->setValue(1);
 		else if (value == "high")
 			pathloss->setValue(2);
+	} else if (property == "LinkLossAlertLevel") {
+		linkLoss->setEnabled(true);
+		if (value == "none")
+			linkLoss->setValue(0);
+		else if (value == "mild")
+			linkLoss->setValue(1);
+		else if (value == "high")
+			linkLoss->setValue(2);
 	}
 }
 
