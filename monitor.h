@@ -24,7 +24,7 @@ public:
 	void setDevice(int index);
 
 signals:
-	void alarmCalled(QString type);
+	void alarm(QString type);
 	void propertyValue(QString property, QString value);
 
 public slots:

@@ -107,7 +107,7 @@ void MonitorView::setModel(Monitor *monitor)
 		model, SLOT(findMeChanged(int)));
 
 	QObject::connect(
-		model, SIGNAL(alarmCalled(QString)),
+		model, SIGNAL(alarm(QString)),
 		this, SLOT(playAlarm(QString)));
 
 	QObject::connect(

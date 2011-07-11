@@ -140,7 +140,7 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 	qWarning() << property;
 
 	if (property == "ThresholdAlert")
-		emit alarmCalled(property);
+		emit alarm(property);
 	else
 		emit propertyValue(property, value.variant().toString());
 }
