@@ -26,6 +26,7 @@ public:
 signals:
 	void alarm(QString type);
 	void propertyValue(QString property, QString value);
+	void dummy();
 
 public slots:
 	void propertyChanged(const QString &property, const QDBusVariant &value);

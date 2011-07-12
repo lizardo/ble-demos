@@ -3,45 +3,33 @@ import Qt 4.7
 Item {
 	id: monitorView
 	width: 480; height: 800;
-
-	Component {
-		id: deviceDelegate
-		Item {
-			width: parent.width
-			height: deviceCol.height
-
-			Column {
-				id: deviceCol
-				width: parent.width
-				height: 30
-					Text {
-						id: deviceName
-						text: name
-						MouseArea {
-							anchors.fill: parent
-							onClicked: {
-								listView.currentIndex = index;
-							}
-						}
-					}
-			}
-		}
-	}
+	signal foo(string bla, int ble)
 
 	ListView {
 		id: listView
-		width: parent.width; height: 480
+		width: parent.width; height: 400
 		model: DeviceListModel {}
-		delegate: deviceDelegate
-		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-		focus: true
+		delegate: DeviceListItem {}
+		clip: true
 	}
 
-		Rectangle {
-			id: contentView
-			color: "red"
-			width: parent.width; height: 480
-			anchors.left: listView.right
-			anchors.right: parent.right
+	Rectangle {
+		id: contentView
+		color: "blue"
+		width: parent.width; height: 400
+		anchors.topMargin: 10
+		anchors.left: listView.left
+		anchors.top: listView.bottom
+
+		Slider {
+			id: threshold
 		}
+
+		Slider {
+			id: pathloss
+
+			anchors.top: threshold.bottom
+			anchors.topMargin: 15
+		}
+	}
 }

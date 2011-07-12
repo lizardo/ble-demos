@@ -2,6 +2,8 @@
 #include <QWidget>
 #include <QtDBus>
 
+#include <QTime>
+
 #include "monitor.h"
 #include "device.h"
 #include "types.h"
@@ -18,6 +20,8 @@ Monitor::Monitor(QString hci)
 						dbus);
 
 	setAdapter(hci);
+
+	QTimer::singleShot(3000, this, SIGNAL(dummy()));
 }
 
 Monitor::~Monitor()

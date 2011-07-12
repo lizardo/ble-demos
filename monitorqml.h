@@ -8,6 +8,9 @@ class MonitorView: public QDeclarativeView
 	Q_OBJECT
 public:
 	MonitorView(Monitor *monitor = NULL);
+
+public slots:
+	void bar(QString s, int i);
 /*
 	void setModel(Monitor *monitor);
 
