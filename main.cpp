@@ -6,7 +6,8 @@
 #include "adapter.h"
 #include "proximity.h"
 
-#include "monitorview.h"
+//#include "monitorview.h"
+#include "monitorqml.h"
 #include "monitor.h"
 
 
