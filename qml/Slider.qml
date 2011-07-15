@@ -8,14 +8,14 @@ Rectangle {
 	color: "green"
 
 	function mouseRelease(pos) {
-		var pixsteps = width/steps
+		var pixsteps = Math.floor(width/steps)
 		var positions
-		var diff
-		
-		for (var i = 0; i < steps-1; i++) {
-			diff = pos - pixsteps * i;
 
-			if (diff < pos - pixsteps * (i+1)) {
+		for (var i = 0; i < steps-1; i++) {
+			var diff1 = Math.abs(pos - pixsteps * i);
+			var diff2 = Math.abs(pos - pixsteps * (i+1) );
+
+			if (diff1 < diff2) {
 				handle.x = pixsteps * i;
 				value = i;
 				return;
@@ -36,7 +36,7 @@ Rectangle {
 			drag.maximumX: slider.width - handle.width
 
 			onReleased: {
-				mouseRelease(mouseX)
+				mouseRelease(handle.x)
 
 				valueChanged(value)
 
