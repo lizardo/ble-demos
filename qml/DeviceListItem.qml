@@ -16,12 +16,13 @@ Item {
 
 	Text {
 		id: deviceName
-		text: name
+		text: modelData
+	}
+
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
 				listView.currentIndex = index;
 			}
 		}
-	}
 }

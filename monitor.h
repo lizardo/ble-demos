@@ -19,9 +19,10 @@ public:
 	Monitor(QString hci = QString());
 	~Monitor();
 
-	QStringList devicesName();
 	void setAdapter(QString hci);
 	void setDevice(int index);
+
+	Q_INVOKABLE QStringList devicesName();
 
 signals:
 	void alarm(QString type);

@@ -8,7 +8,7 @@ Item {
 	ListView {
 		id: listView
 		width: parent.width; height: 400
-		model: DeviceListModel {}
+		model: monitor.devicesName()
 		delegate: DeviceListItem {}
 		clip: true
 	}

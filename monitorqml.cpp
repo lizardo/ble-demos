@@ -1,5 +1,6 @@
 #include <QtDeclarative>
 #include <QGraphicsObject>
+#include <QModelIndex>
 #include <QUrl>
 
 #include <QDebug>
