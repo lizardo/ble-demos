@@ -11,6 +11,7 @@ public:
 
 public slots:
 	void bar(QString s, int i);
+	void onDevicesClick();
 /*
 	void setModel(Monitor *monitor);
 
@@ -30,13 +31,14 @@ private slots:
 private:
 	Monitor *model;
 
+	QObject *devices;
+
 /*
 	QSlider *threshold;
 	QSlider *pathloss;
 	QSlider *linkLoss;
 	QSlider *findMe;
 
-	QListView *devices;
 	QStringListModel *devicesModel;
 
 	Phonon::MediaObject *mildAlarm;
