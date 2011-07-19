@@ -26,6 +26,11 @@ Item {
 		Slider {
 			id: threshold
 			objectName: "threshold"
+
+			Connections {
+				target: threshold
+				onValueChanged: monitor.thresholdChanged(threshold.value)
+			}
 		}
 
 		Slider {
@@ -34,6 +39,11 @@ Item {
 
 			anchors.top: threshold.bottom
 			anchors.topMargin: 15
+
+			Connections {
+				target: pathloss
+				onValueChanged: monitor.pathlossChanged(pathloss.value)
+				}
 		}
 
 		Slider {
@@ -42,6 +52,11 @@ Item {
 
 			anchors.top: pathloss.bottom
 			anchors.topMargin: 15
+
+			Connections {
+				target: linkloss
+				onValueChanged: { monitor.linkLossChanged(linkloss.value) }
+			}
 		}
 	}
 

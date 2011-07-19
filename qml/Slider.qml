@@ -38,8 +38,6 @@ Rectangle {
 			onReleased: {
 				mouseRelease(handle.x)
 
-				valueChanged(value)
-
 				foo("aaa", value)
 			}
 		}
