@@ -45,11 +45,16 @@ Rectangle {
 		}
 	}
 
+	function setValue(newValue) {
+		if (value == newValue)
+			return;
+
+		var pixsteps = Math.floor(width/steps)
+		handle.x = pixsteps * (newValue)
+	}
+
 	Connections {
 		target: monitor
-		onPropertyValue: {
-			print(property + value)
-		}
 		onDummy: print( "DUMMY");
 	}
 }

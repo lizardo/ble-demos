@@ -33,6 +33,10 @@ private:
 
 	QObject *devices;
 
+	QObject *threshold;
+	QObject *pathloss;
+	QObject *linkloss;
+
 /*
 	QSlider *threshold;
 	QSlider *pathloss;
