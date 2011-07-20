@@ -5,25 +5,37 @@ Rectangle {
 	width: 320; height: 40
 	property int value: -1
 	property int steps: 3
+	property int pixsteps: Math.floor(width / (steps - 1))
 	color: "green"
 
+	function setKnobPos(v) {
+		var halfKnob = handle.width / 2;
+
+		if (v == 0)
+			halfKnob = 0;
+		else if (v == (steps - 1))
+			halfKnob = handle.width;
+
+		handle.x = pixsteps * v - halfKnob;
+	}
+
 	function mouseRelease(pos) {
-		var pixsteps = Math.floor(width/steps)
 		var positions
 
 		for (var i = 0; i < steps-1; i++) {
 			var diff1 = Math.abs(pos - pixsteps * i);
-			var diff2 = Math.abs(pos - pixsteps * (i+1) );
+			var diff2 = Math.abs(pos - pixsteps * (i+1));
 
 			if (diff1 < diff2) {
-				handle.x = pixsteps * i;
 				value = i;
+				setKnobPos(i)
+
 				return;
 			}
 		}
 
 		value = steps - 1;
-		handle.x = pixsteps * (steps - 1)
+		setKnobPos(value)
 	}
 
 	Rectangle {
@@ -47,8 +59,7 @@ Rectangle {
 		if (value == newValue)
 			return;
 
-		var pixsteps = Math.floor(width/steps)
-		handle.x = pixsteps * (newValue)
+		setKnobPos(newValue)
 	}
 
 	Connections {
