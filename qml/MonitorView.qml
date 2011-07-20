@@ -5,11 +5,17 @@ Item {
 	width: 480; height: 800;
 	signal foo(string bla, int ble)
 
+	Text {
+		id: labelDevices
+		text: "Devices:"
+	}
+
 	ListView {
 		id: listView
 		currentIndex: -1
 		objectName: "listView"
 		width: parent.width; height: 400
+		anchors.top: labelDevices.bottom
 		model: monitor.devicesName()
 		delegate: DeviceListItem {}
 		clip: true
@@ -23,9 +29,16 @@ Item {
 		anchors.left: listView.left
 		anchors.top: listView.bottom
 
+		Text {
+			id: labelThreshold
+			text: "Threshold:"
+		}
+
 		Slider {
 			id: threshold
 			objectName: "threshold"
+
+			anchors.left: pathloss.left
 
 			Connections {
 				target: threshold
@@ -33,11 +46,20 @@ Item {
 			}
 		}
 
+		Text {
+			id: labelPathloss
+			text: "Pathloss Alert Level:"
+
+			anchors.top: pathloss.top
+		}
+
 		Slider {
 			id: pathloss
 			objectName: "pathloss"
 
 			anchors.top: threshold.bottom
+			anchors.left: labelPathloss.right
+			anchors.leftMargin: 15
 			anchors.topMargin: 15
 
 			Connections {
@@ -46,12 +68,21 @@ Item {
 				}
 		}
 
+		Text {
+			id: labelLinkloss
+			text: "Linkloss Alert Level:"
+
+			anchors.top: linkloss.top
+		}
+
 		Slider {
 			id: linkloss
 			objectName: "linkloss"
 
 			anchors.top: pathloss.bottom
+			anchors.left: labelLinkloss.right
 			anchors.topMargin: 15
+			anchors.leftMargin: 15
 
 			Connections {
 				target: linkloss
