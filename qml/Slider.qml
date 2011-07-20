@@ -3,7 +3,7 @@ import Qt 4.7
 Rectangle {
 	id: slider;
 	width: 320; height: 40
-	property int value: Math.round(handle.x*100/(slider.width-handle.width))
+	property int value: -1
 	property int steps: 3
 	color: "green"
 
