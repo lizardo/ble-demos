@@ -1,12 +1,20 @@
 import Qt 4.7
 
-Rectangle {
+Item {
 	id: slider;
 	width: 320; height: 40
 	property int value: -1
 	property int steps: 3
 	property int pixsteps: Math.floor(width / (steps - 1))
-	color: "green"
+
+	BorderImage {
+		width: parent.width;
+		border { left: 5; right: 5; }
+		horizontalTileMode: BorderImage.Repeat
+		source: "images/off.png"
+
+		anchors.verticalCenter: parent.verticalCenter
+	}
 
 	function setKnobPos(v) {
 		var halfKnob = handle.width / 2;
@@ -38,9 +46,9 @@ Rectangle {
 		setKnobPos(value)
 	}
 
-	Rectangle {
-		id: handle; width: 40; height: 40
-		color: "red"
+	Image {
+		id: handle;
+		source: "images/knob.png"
 		MouseArea {
 			anchors.fill: parent
 			drag.target: parent; drag.axis: "XAxis"
