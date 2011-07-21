@@ -2,21 +2,30 @@ import Qt 4.7
 
 Item {
 	width: parent.width
-	height: 50
+	height: 20
 
 	property bool active: listView.currentIndex == index
 	signal click()
 
 	Rectangle {
 		width: parent.width
-		height: 50
-		color: "red"
-		visible: active
+		//height: 50
+
+/*
+		color: {
+			if (active == true)
+				return "grey"
+			else
+				return "white"
+		}
+		*/
 	}
 
 	Text {
 		id: deviceName
 		text: modelData
+		color: "#878A92"
+		font.weight: Font.Bold
 	}
 
 		MouseArea {
@@ -25,4 +34,5 @@ Item {
 				listView.currentIndex = index;
 			}
 		}
+
 }

@@ -1,13 +1,18 @@
 import Qt 4.7
 
-Item {
+Rectangle {
 	id: monitorView
 	width: 480; height: 800;
 	signal foo(string bla, int ble)
 
+	color: "#3F303A"
+
 	Text {
 		id: labelDevices
 		text: "Devices:"
+		color: "white"
+		font.pointSize: 10
+		font.weight: Font.Bold
 	}
 
 	ListView {
@@ -19,19 +24,27 @@ Item {
 		model: monitor.devicesName()
 		delegate: DeviceListItem {}
 		clip: true
+		highlight: Rectangle { color: "#02118A"; radius: 5 }
 	}
 
 	Rectangle {
 		id: contentView
-		color: "blue"
 		width: parent.width; height: 400
 		anchors.topMargin: 10
 		anchors.left: listView.left
 		anchors.top: listView.bottom
 
+		color: "#3C4062"
+
 		Text {
 			id: labelThreshold
 			text: "Threshold:"
+			color: "white"
+			font.pointSize: 10
+			font.weight: Font.Bold
+
+			anchors.right: labelPathloss.right
+			anchors.verticalCenter: threshold.verticalCenter
 		}
 
 		Slider {
@@ -39,6 +52,9 @@ Item {
 			objectName: "threshold"
 
 			anchors.left: pathloss.left
+
+			anchors.right: parent.right
+			anchors.rightMargin: 10
 
 			Connections {
 				target: threshold
@@ -50,7 +66,11 @@ Item {
 			id: labelPathloss
 			text: "Pathloss Alert Level:"
 
-			anchors.top: pathloss.top
+			color: "white"
+			font.pointSize: 10
+			font.weight: Font.Bold
+
+			anchors.verticalCenter: pathloss.verticalCenter
 		}
 
 		Slider {
@@ -59,8 +79,11 @@ Item {
 
 			anchors.top: threshold.bottom
 			anchors.left: labelPathloss.right
+			anchors.right: parent.right
+			anchors.rightMargin: 10
 			anchors.leftMargin: 15
 			anchors.topMargin: 15
+
 
 			Connections {
 				target: pathloss
@@ -72,7 +95,11 @@ Item {
 			id: labelLinkloss
 			text: "Linkloss Alert Level:"
 
-			anchors.top: linkloss.top
+			color: "white"
+			font.pointSize: 10
+			font.weight: Font.Bold
+
+			anchors.verticalCenter: linkloss.verticalCenter
 		}
 
 		Slider {
@@ -81,8 +108,10 @@ Item {
 
 			anchors.top: pathloss.bottom
 			anchors.left: labelLinkloss.right
+			anchors.right: parent.right
 			anchors.topMargin: 15
 			anchors.leftMargin: 15
+			anchors.rightMargin: 10
 
 			Connections {
 				target: linkloss
