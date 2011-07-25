@@ -15,15 +15,14 @@ int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 	QStringList args = app.arguments();
+	QString hci;
 
-	if (args.length() < 2) {
-		qWarning() << "Usage:" << args.at(0) << "<hciX>";
-		return 0;
-	}
+	if (args.length() == 2)
+		hci = args.at(1);
 
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
-	Monitor *monitor = new Monitor(args.at(1));
+	Monitor *monitor = new Monitor(hci);
 
 	MonitorView *monitorView = new MonitorView(monitor);
 
