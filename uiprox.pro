@@ -5,7 +5,6 @@
 QT += phonon declarative
 CONFIG += qdbus
 TEMPLATE = app
-TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
 
@@ -32,4 +31,24 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog
+    qtc_packaging/debian_harmattan/changelog \
+    qml/DeviceListItem.qml \
+    qml/MonitorView.qml \
+    qml/Slider.qml \
+    qml/images/knob.png \
+    qml/images/off.png \
+    qml/MainMeego.qml \
+    uiprox.desktop \
+    uiprox.png \
+    uiprox.svg
+
+RESOURCES += \
+    resource.qrc
+
+include(deployment.pri)
+qtcAddDeployment()
+
+unix:!symbian:!maemo5 {
+    target.path = /opt/uiprox/bin
+    INSTALLS += target
+}

@@ -1,8 +1,5 @@
-/* main.cpp -- The main file. */
-
 /* Copyright (C) 2011 Instituto Nokia de Tecnologia
-
-   Author: Sheldon Almeida Demario <sheldon.demario@openbossa.org>
+   Copyright (C) 2011 Sheldon Almeida Demario
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,34 +15,13 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include <QObject>
+import QtQuick 1.1
+import com.meego 1.0
 
-#include "types.h"
-#include "manager.h"
-#include "adapter.h"
-#include "proximity.h"
+PageStackWindow {
+       initialPage: Page {
 
-//#include "monitorview.h"
-#include "monitorqml.h"
-#include "monitor.h"
-
-
-int main(int argc, char **argv)
-{
-	QApplication app(argc, argv);
-	QStringList args = app.arguments();
-	QString hci;
-
-	if (args.length() == 2)
-		hci = args.at(1);
-
-	QDBusConnection dbus = QDBusConnection::systemBus();
-
-	Monitor *monitor = new Monitor(hci);
-
-	MonitorView *monitorView = new MonitorView(monitor);
-
-        monitorView->show();
-	app.exec();
+        MonitorView { id: monitorView }
+       }
 }
+

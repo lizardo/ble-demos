@@ -31,9 +31,12 @@ MonitorView::MonitorView(Monitor *monitor)
 	: model(monitor)
 {
 	rootContext()->setContextProperty("monitor", model);
-	setSource(QUrl("qml/MonitorView.qml"));
 
-	QGraphicsObject *r = rootObject();
+        setSource(QUrl("qrc:/qml/MonitorView.qml"));
+        //setAttribute(Qt::WA_LockPortraitOrientation, true);
+        //setResizeMode(QDeclarativeView::SizeRootObjectToView);
+
+        QGraphicsObject *r = rootObject();
 
 	connect(r, SIGNAL(foo(QString, int)), this, SLOT(bar(QString, int)));
 

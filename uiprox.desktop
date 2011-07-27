@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Name=UiProx
+Exec=invoker --single-instance --type=e /opt/uiprox/bin/uiprox
+Icon=/usr/share/icons/hicolor/64x64/apps/uiprox.png
+X-Window-Icon=
+X-HildonDesk-ShowInToolbar=true
+X-Osso-Type=application/x-executable
