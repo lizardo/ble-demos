@@ -2,7 +2,7 @@ import Qt 4.7
 
 Item {
 	width: parent.width
-	height: 20
+	height: deviceName.height
 
 	property bool active: listView.currentIndex == index
 	signal click()
@@ -26,6 +26,7 @@ Item {
 		text: modelData
 		color: "#878A92"
 		font.weight: Font.Bold
+		font.pointSize: 20
 	}
 
 		MouseArea {
