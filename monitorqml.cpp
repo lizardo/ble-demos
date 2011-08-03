@@ -19,8 +19,6 @@ MonitorView::MonitorView(Monitor *monitor)
 
 	devices = r->findChild<QObject *>("listView");
 
-	threshold = r->findChild<QObject *>("threshold");
-	pathloss = r->findChild<QObject *>("pathloss");
 	linkloss = r->findChild<QObject *>("linkloss");
 
 	connect(devices, SIGNAL(currentIndexChanged()),

@@ -31,10 +31,9 @@ signals:
 
 public slots:
 	void propertyChanged(const QString &property, const QDBusVariant &value);
-	void thresholdChanged(int value);
-	void pathlossChanged(int value);
-	void linkLossChanged(int value);
-	void findMeChanged(int value);
+
+	void onLinkLossChange(int value);
+	void onImmediateAlertChange(int value);
 
 private:
 	Manager *manager;

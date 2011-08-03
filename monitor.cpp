@@ -143,34 +143,10 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 {
 	qWarning() << property;
 
-	if (property == "ThresholdAlert")
-		emit alarm(property);
-	else
-		emit propertyValue(property, value.variant().toString());
+	emit propertyValue(property, value.variant().toString());
 }
 
-void Monitor::thresholdChanged(int value)
-{
-	QVariant arg;
-
-	switch (value) {
-	case 0:
-		arg = QString("low");
-		break;
-	case 1:
-		arg = QString("medium");
-		break;
-	case 2:
-		arg = QString("high");
-		break;
-	}
-
-	qWarning() << arg.toString();
-
-	proximity->SetProperty("Threshold", QDBusVariant(arg));
-}
-
-void Monitor::pathlossChanged(int value)
+void Monitor::onImmediateAlertChange(int value)
 {
 	QVariant arg;
 
@@ -186,12 +162,10 @@ void Monitor::pathlossChanged(int value)
 		break;
 	}
 
-	qWarning() << arg.toString();
-
-	proximity->SetProperty("PathLossAlertLevel", QDBusVariant(arg));
+	proximity->SetProperty("ImmediateAlertLevel", QDBusVariant(arg));
 }
 
-void Monitor::linkLossChanged(int value)
+void Monitor::onLinkLossChange(int value)
 {
 	QVariant arg;
 
@@ -206,29 +180,6 @@ void Monitor::linkLossChanged(int value)
 		arg = QString("high");
 		break;
 	}
-
-	qWarning() << arg.toString();
 
 	proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
-}
-
-void Monitor::findMeChanged(int value)
-{
-	QVariant arg;
-
-	switch (value) {
-	case 0:
-		arg = QString("none");
-		break;
-	case 1:
-		arg = QString("mild");
-		break;
-	case 2:
-		arg = QString("high");
-		break;
-	}
-
-	qWarning() << arg.toString();
-
-	proximity->SetProperty("FindMeAlertLevel", QDBusVariant(arg));
 }

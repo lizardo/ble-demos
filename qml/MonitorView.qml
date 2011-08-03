@@ -37,48 +37,50 @@ Rectangle {
 		color: "#3C4062"
 
 		Text {
-			id: labelThreshold
-			text: "Threshold:"
+			id: labelSignalLevel
+			text: "Signal Level:"
 			color: "white"
 			font.pointSize: 10
 			font.weight: Font.Bold
 
-			anchors.right: labelPathloss.right
-			anchors.verticalCenter: threshold.verticalCenter
-		}
-
-		Slider {
-			id: threshold
-			objectName: "threshold"
-
-			anchors.left: pathloss.left
-
-			anchors.right: parent.right
+			anchors.top: parent.top
+			anchors.right: parent.horizontalCenter
+			anchors.topMargin: 10
 			anchors.rightMargin: 10
-
-			Connections {
-				target: threshold
-				onValueChanged: monitor.thresholdChanged(threshold.value)
-			}
 		}
 
 		Text {
-			id: labelPathloss
-			text: "Pathloss Alert Level:"
+			id: signalLevel
+			objectName: "signalLevel"
+
+			text: "unknown"
+
+			font.pointSize: 10
+			font.weight: Font.Bold
+			anchors.top: labelSignalLevel.top
+			anchors.left: labelSignalLevel.right
+			anchors.leftMargin: 10
+		}
+
+		Text {
+			id: labelImmediate
+			text: "Immediate Alert Level:"
 
 			color: "white"
 			font.pointSize: 10
 			font.weight: Font.Bold
 
-			anchors.verticalCenter: pathloss.verticalCenter
+			anchors.verticalCenter: immediateAlert.verticalCenter
+			anchors.right: parent.horizontalCenter
+			anchors.rightMargin: 10
 		}
 
 		Slider {
-			id: pathloss
-			objectName: "pathloss"
+			id: immediateAlert
+			objectName: "immediateAlert"
 
-			anchors.top: threshold.bottom
-			anchors.left: labelPathloss.right
+			anchors.top: signalLevel.bottom
+			anchors.left: labelImmediate.right
 			anchors.right: parent.right
 			anchors.rightMargin: 10
 			anchors.leftMargin: 15
@@ -86,8 +88,8 @@ Rectangle {
 
 
 			Connections {
-				target: pathloss
-				onValueChanged: monitor.pathlossChanged(pathloss.value)
+				target: immediateAlert
+				onValueChanged: monitor.onImmediateAlertChange(immediateAlert.value)
 				}
 		}
 
@@ -100,13 +102,15 @@ Rectangle {
 			font.weight: Font.Bold
 
 			anchors.verticalCenter: linkloss.verticalCenter
+			anchors.right: parent.horizontalCenter
+			anchors.rightMargin: 10
 		}
 
 		Slider {
 			id: linkloss
 			objectName: "linkloss"
 
-			anchors.top: pathloss.bottom
+			anchors.top: immediateAlert.bottom
 			anchors.left: labelLinkloss.right
 			anchors.right: parent.right
 			anchors.topMargin: 15
@@ -115,7 +119,7 @@ Rectangle {
 
 			Connections {
 				target: linkloss
-				onValueChanged: { monitor.linkLossChanged(linkloss.value) }
+				onValueChanged: { monitor.onLinkLossChange(linkloss.value) }
 			}
 		}
 	}
@@ -142,10 +146,10 @@ Rectangle {
 	Connections {
 		target: monitor
 		onPropertyValue: {
-			if (property == "Threshold")
-				threshold.setValue(valueToInt(property, value))
-			else if (property == "PathLossAlertLevel")
-				pathloss.setValue(valueToInt(property, value))
+			if (property == "SignalLevel")
+				signalLevel.text = value;
+			else if (property == "ImmediateAlertLevel")
+				immediateAlert.setValue(valueToInt(property, value))
 			else if (property == "LinkLossAlertLevel")
 				linkloss.setValue(valueToInt(property, value))
 		}

@@ -33,8 +33,6 @@ private:
 
 	QObject *devices;
 
-	QObject *threshold;
-	QObject *pathloss;
 	QObject *linkloss;
 
 /*
