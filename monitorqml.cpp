@@ -19,8 +19,6 @@ MonitorView::MonitorView(Monitor *monitor)
 
 	devices = r->findChild<QObject *>("listView");
 
-	linkloss = r->findChild<QObject *>("linkloss");
-
 	connect(devices, SIGNAL(currentIndexChanged()),
 		this, SLOT(onDevicesClick()));
 }

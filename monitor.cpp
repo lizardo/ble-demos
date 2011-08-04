@@ -16,8 +16,7 @@ Monitor::Monitor(QString hci)
 {
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
-	manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH,
-						dbus);
+	manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
 
 	setAdapter(hci);
 
