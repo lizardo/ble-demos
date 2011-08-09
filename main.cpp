@@ -46,6 +46,10 @@ int main(int argc, char **argv)
 
 	MonitorView *monitorView = new MonitorView(monitor);
 
+#ifdef Q_WS_MAEMO5
+        monitorView->showFullScreen();
+#else
         monitorView->show();
+#endif
 	app.exec();
 }

@@ -32,11 +32,15 @@ MonitorView::MonitorView(Monitor *monitor)
 {
 	rootContext()->setContextProperty("monitor", model);
 
-        setSource(QUrl("qrc:/qml/MonitorView.qml"));
-        //setAttribute(Qt::WA_LockPortraitOrientation, true);
-        //setResizeMode(QDeclarativeView::SizeRootObjectToView);
+#ifdef MEEGO_EDITION_HARMATTAN
+	setSource(QUrl("qrc:/qml/MainMeego.qml"));
+	setAttribute(Qt::WA_LockPortraitOrientation, true);
+	setResizeMode(QDeclarativeView::SizeRootObjectToView);
+#else
+	setSource(QUrl("qrc:/qml/MonitorView.qml"));
+#endif
 
-        QGraphicsObject *r = rootObject();
+	QGraphicsObject *r = rootObject();
 
 	connect(r, SIGNAL(foo(QString, int)), this, SLOT(bar(QString, int)));
 
