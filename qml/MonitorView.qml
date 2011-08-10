@@ -34,6 +34,7 @@ Rectangle {
 		anchors.left: listView.left
 		anchors.top: listView.bottom
 
+		enabled: false
 		color: "#3C4062"
 
 		Text {
@@ -121,6 +122,11 @@ Rectangle {
 				target: linkloss
 				onValueChanged: { monitor.onLinkLossChange(linkloss.value) }
 			}
+		}
+
+		Connections {
+			target: listView
+			onCurrentItemChanged: {contentView.enabled = true }
 		}
 	}
 
