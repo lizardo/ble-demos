@@ -25,20 +25,36 @@ Rectangle {
 
 	color: "#3F303A"
 
-	Text {
-		id: labelDevices
-		text: "Devices:"
-		color: "white"
-		font.pointSize: 10
-		font.weight: Font.Bold
+	Image {
+		id: header
+		source: "images/header.png"
+
+		Text {
+			id: labelDevices
+			text: "Devices:"
+			color: "#768EA5"
+			font.pixelSize: 32
+
+			anchors.fill: parent.fill
+			anchors.verticalCenter: parent.verticalCenter
+		}
+	}
+
+
+	Image {
+		id: list_bg
+		source: "images/list_bg.png"
+
+		anchors.top: header.bottom
 	}
 
 	ListView {
 		id: listView
-		currentIndex: -1
 		objectName: "listView"
-		width: parent.width; height: 400
-		anchors.top: labelDevices.bottom
+		currentIndex: -1
+
+		anchors.fill: list_bg
+
 		model: monitor.devicesName()
 		delegate: DeviceListItem {}
 		clip: true
@@ -48,24 +64,29 @@ Rectangle {
 	Rectangle {
 		id: contentView
 		width: parent.width; height: 400
-		anchors.topMargin: 10
-		anchors.left: listView.left
-		anchors.top: listView.bottom
+		anchors.top: list_bg.bottom
 
 		enabled: false
-		color: "#3C4062"
+
+		Image {
+			id: signal_bg
+			source: "images/content_bg_signal.png"
+
+			anchors.top: parent.top
+		}
 
 		Text {
 			id: labelSignalLevel
 			text: "Signal Level:"
-			color: "white"
-			font.pointSize: 10
-			font.weight: Font.Bold
 
-			anchors.top: parent.top
-			anchors.right: parent.horizontalCenter
-			anchors.topMargin: 10
-			anchors.rightMargin: 10
+			color: "#768EA5"
+			font.pixelSize: 32
+
+			anchors.top: signal_bg.top
+			anchors.right: signal_bg.horizontalCenter
+			anchors.topMargin: 50
+			anchors.leftMargin: 10
+			anchors.rightMargin: 5
 		}
 
 		Text {
@@ -74,37 +95,42 @@ Rectangle {
 
 			text: "unknown"
 
-			font.pointSize: 10
+			color: "#60748E"
+			font.pixelSize: 32
 			font.weight: Font.Bold
+
 			anchors.top: labelSignalLevel.top
 			anchors.left: labelSignalLevel.right
-			anchors.leftMargin: 10
+			anchors.leftMargin: 5
+		}
+
+		Image {
+			id: immediate_bg
+			source: "images/content_bg_alerts.png"
+
+			anchors.top: signal_bg.bottom
 		}
 
 		Text {
 			id: labelImmediate
 			text: "Immediate Alert Level:"
 
-			color: "white"
-			font.pointSize: 10
-			font.weight: Font.Bold
+			color: "#768EA5"
+			font.pixelSize: 32
 
-			anchors.verticalCenter: immediateAlert.verticalCenter
-			anchors.right: parent.horizontalCenter
-			anchors.rightMargin: 10
+			anchors.top: immediate_bg.top
+			anchors.left: immediate_bg.left
+			anchors.topMargin: 20
+			anchors.leftMargin: 10
 		}
 
 		Slider {
 			id: immediateAlert
 			objectName: "immediateAlert"
 
-			anchors.top: signalLevel.bottom
-			anchors.left: labelImmediate.right
-			anchors.right: parent.right
-			anchors.rightMargin: 10
-			anchors.leftMargin: 15
+			anchors.horizontalCenter: immediate_bg.horizontalCenter
+			anchors.top: labelImmediate.bottom
 			anchors.topMargin: 15
-
 
 			Connections {
 				target: immediateAlert
@@ -112,29 +138,33 @@ Rectangle {
 				}
 		}
 
+		Image {
+			id: linkloss_bg
+			source: "images/content_bg_alerts.png"
+
+			anchors.top: immediate_bg.bottom
+		}
+
 		Text {
 			id: labelLinkloss
 			text: "Linkloss Alert Level:"
 
-			color: "white"
-			font.pointSize: 10
-			font.weight: Font.Bold
+			color: "#768EA5"
+			font.pixelSize: 32
 
-			anchors.verticalCenter: linkloss.verticalCenter
-			anchors.right: parent.horizontalCenter
-			anchors.rightMargin: 10
+			anchors.top: linkloss_bg.top
+			anchors.left: linkloss_bg.left
+			anchors.topMargin: 20
+			anchors.leftMargin: 10
 		}
 
 		Slider {
 			id: linkloss
 			objectName: "linkloss"
 
-			anchors.top: immediateAlert.bottom
-			anchors.left: labelLinkloss.right
-			anchors.right: parent.right
+			anchors.horizontalCenter: linkloss_bg.horizontalCenter
+			anchors.top: labelLinkloss.bottom
 			anchors.topMargin: 15
-			anchors.leftMargin: 15
-			anchors.rightMargin: 10
 
 			Connections {
 				target: linkloss

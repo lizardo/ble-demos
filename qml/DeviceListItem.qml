@@ -42,9 +42,12 @@ Item {
 	Text {
 		id: deviceName
 		text: modelData
-		color: "#878A92"
-		font.weight: Font.Bold
-		font.pointSize: 20
+		color: "#E4EAF1"
+		font.pixelSize: 36
+
+		width: parent.width
+
+		horizontalAlignment: Text.AlignHCenter
 	}
 
 		MouseArea {
