@@ -46,6 +46,10 @@ OTHER_FILES += \
     qml/Slider.qml \
     qml/images/knob.png \
     qml/images/off.png \
+    qml/images/list_bg.png \
+    qml/images/header.png \
+    qml/images/content_bg_signal.png \
+    qml/images/content_bg_alerts.png \
     qml/MainMeego.qml \
     uiprox.desktop \
     uiprox.png \
