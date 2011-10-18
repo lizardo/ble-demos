@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 
 	MonitorView *monitorView = new MonitorView(monitor);
 
-#ifdef Q_WS_MAEMO5
+#ifdef MEEGO_EDITION_HARMATTAN
         monitorView->showFullScreen();
 #else
         monitorView->show();
