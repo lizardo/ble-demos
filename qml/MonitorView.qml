@@ -65,6 +65,8 @@ Rectangle {
 		id: contentView
 		width: parent.width; height: 400
 		anchors.top: list_bg.bottom
+                //Hack to add a not planned pathloss slider without change the list bg image
+                anchors.topMargin: -142
 
 		enabled: false
 
@@ -105,10 +107,45 @@ Rectangle {
 		}
 
 		Image {
-			id: immediate_bg
+			id: pathloss_bg
 			source: "images/content_bg_alerts.png"
 
 			anchors.top: signal_bg.bottom
+		}
+
+		Text {
+			id: labelPathloss
+			text: "Pathloss:"
+
+			color: "#768EA5"
+			font.pixelSize: 32
+
+			anchors.top: pathloss_bg.top
+			anchors.left: pathloss_bg.left
+			anchors.topMargin: 20
+			anchors.leftMargin: 10
+		}
+
+		Slider {
+			id: pathlossLevel
+			objectName: "pathlossLevel"
+
+			anchors.horizontalCenter: pathloss_bg.horizontalCenter
+			anchors.top: labelPathloss.bottom
+			anchors.topMargin: 15
+/*
+			Connections {
+				target: pathlossLevel
+				onValueChanged: monitor.onImmediateAlertChange(immediateAlert.value)
+			}
+*/
+		}
+
+		Image {
+			id: immediate_bg
+			source: "images/content_bg_alerts.png"
+
+			anchors.top: pathloss_bg.bottom
 		}
 
 		Text {
