@@ -20,7 +20,7 @@ import com.meego 1.0
 
 PageStackWindow {
        initialPage: Page {
-
+        orientationLock: PageOrientation.LockPortrait
         MonitorView { id: monitorView }
        }
 }
