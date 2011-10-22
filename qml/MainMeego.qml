@@ -19,6 +19,8 @@ import QtQuick 1.1
 import com.meego 1.0
 
 PageStackWindow {
+       signal foo(string bla, int ble)
+
        initialPage: Page {
         orientationLock: PageOrientation.LockPortrait
         MonitorView { id: monitorView }
