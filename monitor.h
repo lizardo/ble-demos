@@ -56,6 +56,8 @@ public slots:
 	void onLinkLossChange(int value);
 	void onImmediateAlertChange(int value);
 
+        void onPathlossChange(int value);
+
 private:
 	Manager *manager;
 	Adapter *adapter;
@@ -63,9 +65,14 @@ private:
 	Device *device;
 	QList<Device *> devices;
 
+        int m_threshold;
+
 	void lookDevices(void);
 	void destroyDevices();
 	void checkServices(QString path);
+
+        void unlock();
+        void lock();
 };
 
 #endif

@@ -135,12 +135,12 @@ Rectangle {
 			anchors.horizontalCenter: pathloss_bg.horizontalCenter
 			anchors.top: labelPathloss.bottom
 			anchors.topMargin: 15
-/*
+
 			Connections {
 				target: pathlossLevel
-				onValueChanged: monitor.onImmediateAlertChange(immediateAlert.value)
+                                onValueChanged: monitor.onPathlossChange(pathlossLevel.value)
 			}
-*/
+
 		}
 
 		Image {
@@ -250,7 +250,7 @@ Rectangle {
 		onPropertyValue: {
                         if (property == "SignalLevel") {
                                 signalLevel.text = value
-                                pathlossLevel.setValue(valueToInt(property, value))
+                                //pathlossLevel.setValue(valueToInt(property, value))
                         } else if (property == "ImmediateAlertLevel") {
 				immediateAlert.setValue(valueToInt(property, value))
                         } else if (property == "LinkLossAlertLevel") {

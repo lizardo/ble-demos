@@ -32,7 +32,7 @@ typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
 Monitor::Monitor(QString hci)
-	: manager(NULL), adapter(NULL), device(NULL)
+    : manager(NULL), adapter(NULL), device(NULL), m_threshold(-1)
 {
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
@@ -41,6 +41,51 @@ Monitor::Monitor(QString hci)
 	setAdapter(hci);
 
 	QTimer::singleShot(3000, this, SIGNAL(dummy()));
+}
+
+
+void Monitor::lock()
+{
+
+qDebug() << "lock:";
+
+/*
+QDBusConnection bus = QDBusConnection::sessionBus();
+QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
+                          "com.nokia.mce.request",
+                          QDBusConnection::systemBus());
+qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
+*/
+
+QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+
+QList<QVariant> args;
+    args << "lock";
+    m.setArguments(args);
+
+    QDBusConnection::systemBus().send(m);
+}
+
+void Monitor::unlock()
+{
+
+qDebug() << "unlock:";
+
+/*
+QDBusConnection bus = QDBusConnection::sessionBus();
+QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
+                          "com.nokia.mce.request",
+                          QDBusConnection::systemBus());
+qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
+*/
+
+QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+
+QList<QVariant> args;
+    args << "unlock";
+    m.setArguments(args);
+
+    QDBusConnection::systemBus().send(m);
 }
 
 Monitor::~Monitor()
@@ -163,6 +208,24 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 	qWarning() << property;
 
 	emit propertyValue(property, value.variant().toString());
+
+        int v;
+
+        if (value.variant().toString() == "unknown")
+            v = -1;
+        else if (value.variant().toString() == "weak")
+            v = 0;
+        else if (value.variant().toString() == "regular")
+            v = 1;
+        else if (value.variant().toString() == "good")
+            v = 2;
+
+        if (property == "SignalLevel") {
+            if (m_threshold > v)
+                unlock();
+            else
+                lock();
+        }
 }
 
 void Monitor::onImmediateAlertChange(int value)
@@ -201,4 +264,10 @@ void Monitor::onLinkLossChange(int value)
 	}
 
 	proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
+}
+
+
+void Monitor::onPathlossChange(int value)
+{
+    m_threshold = value;
 }
