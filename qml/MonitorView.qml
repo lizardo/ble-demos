@@ -130,6 +130,8 @@ Rectangle {
 			id: pathlossLevel
 			objectName: "pathlossLevel"
 
+                        enabled: false
+
 			anchors.horizontalCenter: pathloss_bg.horizontalCenter
 			anchors.top: labelPathloss.bottom
 			anchors.topMargin: 15
@@ -223,8 +225,17 @@ Rectangle {
 				return 1;
 			else if (value == 'high')
 				return 2;
-		} else {
-			if (value == 'none')
+                } else if (property == "SignalLevel") {
+                    if (value == 'weak')
+                        return 0;
+                    if (value == 'unknown')
+                        return 0;
+                    else if (value == 'regular')
+                        return 1;
+                    else if (value == 'good')
+                        return 2;
+                } else {
+                    if (value == 'none')
 				return 0;
 			else if (value == 'mild')
 				return 1;
@@ -237,12 +248,14 @@ Rectangle {
 	Connections {
 		target: monitor
 		onPropertyValue: {
-			if (property == "SignalLevel")
-				signalLevel.text = value;
-			else if (property == "ImmediateAlertLevel")
+                        if (property == "SignalLevel") {
+                                signalLevel.text = value
+                                pathlossLevel.setValue(valueToInt(property, value))
+                        } else if (property == "ImmediateAlertLevel") {
 				immediateAlert.setValue(valueToInt(property, value))
-			else if (property == "LinkLossAlertLevel")
+                        } else if (property == "LinkLossAlertLevel") {
 				linkloss.setValue(valueToInt(property, value))
+                        }
 		}
 	}
 }
