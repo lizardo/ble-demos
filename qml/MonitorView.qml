@@ -114,7 +114,7 @@ Rectangle {
 		}
 
 		Text {
-			id: labelPathloss
+                        id: labelPathloss
 			text: "Pathloss:"
 
 			color: "#768EA5"
@@ -129,8 +129,6 @@ Rectangle {
 		Slider {
 			id: pathlossLevel
 			objectName: "pathlossLevel"
-
-                        enabled: false
 
 			anchors.horizontalCenter: pathloss_bg.horizontalCenter
 			anchors.top: labelPathloss.bottom
@@ -250,7 +248,7 @@ Rectangle {
 		onPropertyValue: {
                         if (property == "SignalLevel") {
                                 signalLevel.text = value
-                                pathlossLevel.setValue(valueToInt(property, value))
+                                //pathlossLevel.setValue(valueToInt(property, value))
                         } else if (property == "ImmediateAlertLevel") {
 				immediateAlert.setValue(valueToInt(property, value))
                         } else if (property == "LinkLossAlertLevel") {

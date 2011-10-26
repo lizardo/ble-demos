@@ -205,9 +205,6 @@ QStringList Monitor::devicesName()
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
-
-
-
         int v;
 
         if (value.variant().toString() == "unknown")
@@ -228,9 +225,7 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
                 unlock();
         }
 
-        m_threshold = v;
         emit propertyValue(property, value.variant().toString());
-
 }
 
 void Monitor::onImmediateAlertChange(int value)
