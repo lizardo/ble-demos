@@ -60,7 +60,7 @@ qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
 
 QList<QVariant> args;
-    args << "lock";
+    args << "locked";
     m.setArguments(args);
 
     QDBusConnection::systemBus().send(m);
@@ -82,7 +82,7 @@ qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
 
 QList<QVariant> args;
-    args << "unlock";
+    args << "unlocked";
     m.setArguments(args);
 
     QDBusConnection::systemBus().send(m);
@@ -205,9 +205,8 @@ QStringList Monitor::devicesName()
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
-	qWarning() << property;
 
-	emit propertyValue(property, value.variant().toString());
+
 
         int v;
 
@@ -220,12 +219,18 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
         else if (value.variant().toString() == "good")
             v = 2;
 
+        qWarning() << property << m_threshold << v;
+
         if (property == "SignalLevel") {
             if (m_threshold > v)
-                unlock();
-            else
                 lock();
+            else
+                unlock();
         }
+
+        m_threshold = v;
+        emit propertyValue(property, value.variant().toString());
+
 }
 
 void Monitor::onImmediateAlertChange(int value)
@@ -269,5 +274,6 @@ void Monitor::onLinkLossChange(int value)
 
 void Monitor::onPathlossChange(int value)
 {
+    qWarning() << "mthreshold:" << m_threshold << value;
     m_threshold = value;
 }

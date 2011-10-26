@@ -250,7 +250,7 @@ Rectangle {
 		onPropertyValue: {
                         if (property == "SignalLevel") {
                                 signalLevel.text = value
-                                //pathlossLevel.setValue(valueToInt(property, value))
+                                pathlossLevel.setValue(valueToInt(property, value))
                         } else if (property == "ImmediateAlertLevel") {
 				immediateAlert.setValue(valueToInt(property, value))
                         } else if (property == "LinkLossAlertLevel") {
