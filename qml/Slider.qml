@@ -69,6 +69,10 @@ Item {
 		source: "images/knob.png"
 		MouseArea {
 			anchors.fill: parent
+			anchors.topMargin: -20
+			anchors.bottomMargin: -20
+			anchors.rightMargin: -20
+			anchors.leftMargin: -20
 			drag.target: parent; drag.axis: "XAxis"
 			drag.minimumX: 0
 			drag.maximumX: slider.width - handle.width
