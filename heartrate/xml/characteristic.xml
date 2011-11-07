@@ -1,0 +1,26 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="org.bluez.Characteristic">
+        <method name="DiscoverCharacteristics">
+            <arg type="ao" direction="out"/>
+        </method>
+        <method name="RegisterCharacteristicsWatcher">
+            <arg type="o" direction="in"/>
+        </method>
+        <method name="UnregisterCharacteristicsWatcher">
+            <arg type="o" direction="in"/>
+        </method>
+        <method name="GetProperties">
+            <arg type="a{sv}" direction="out"/>
+            <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+        </method>
+        <method name="SetProperty">
+            <arg type="s" direction="in"/>
+            <arg type="v" direction="in"/>
+        </method>
+    </interface>
+    <node name="characteristic000a"/>
+    <node name="characteristic000d"/>
+    <node name="characteristic000f"/>
+</node>

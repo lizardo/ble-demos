@@ -1,0 +1,10 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/test/watcher">
+  <interface name="org.bluez.Watcher">
+    <method name="ValueChanged">
+      <arg direction="in"  type="o" name="characteristic" />
+      <arg direction="in"  type="ay" name="value" />
+    </method>
+  </interface>
+</node>
