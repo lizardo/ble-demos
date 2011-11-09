@@ -41,7 +41,7 @@ Page {
             anchors.right: parent.right
             id: listView
             currentIndex: -1
-            height: 400
+            height: 300
 
             model: monitor.deviceModel
             delegate: ListDelegate {
@@ -52,28 +52,32 @@ Page {
         }
         Separator {}
         Label {
+            id: labelStatus
             anchors.margins: UiConstants.DefaultMargin
             anchors.left: parent.left
             anchors.right: parent.right
             horizontalAlignment: Text.AlignHCenter
 
-            text: monitor.value
+            text: monitor.statusMessage
             platformStyle: LabelStyle {
-                fontPixelSize: 147
+                fontPixelSize: 24
             }
         }
         Label {
             anchors.margins: UiConstants.DefaultMargin
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.top: labelStatus.bottom
+            anchors.bottom: parent.bottom
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
 
-            visible: monitor.skinContact
-            text: "Skin contact!"
+            text: monitor.value
             platformStyle: LabelStyle {
-                fontPixelSize: 48
+                fontPixelSize: 147
             }
         }
+
         ScrollDecorator { flickableItem: listView }
     }
 }

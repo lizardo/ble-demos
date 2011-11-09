@@ -19,6 +19,7 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QApplication>
 #include <QObject>
 #include <QtDBus>
 #include <QTimer>
@@ -67,7 +68,7 @@ void Monitor::destroyDevices()
 void Monitor::setAdapter(QString hci)
 {
     if (!m_manager) {
-        qWarning() << "Invalid manager..";
+	setStatusMessage("Error: Invalid Manager");
         return;
     }
 
@@ -76,7 +77,7 @@ void Monitor::setAdapter(QString hci)
         delete m_adapter;
     }
 
-    qWarning() << "Looking for adapter...";
+    setStatusMessage("Looking for adapter...");
     QDBusReply<QDBusObjectPath> obReply;
     if (hci.isEmpty())
         obReply = m_manager->DefaultAdapter();
@@ -84,7 +85,7 @@ void Monitor::setAdapter(QString hci)
         obReply = m_manager->FindAdapter(hci);
 
     if (!obReply.isValid()) {
-        qWarning() << "Error:" << obReply.error();
+	setStatusMessage("Error: " + obReply.error().message());
         return;
     }
 
@@ -98,9 +99,10 @@ void Monitor::setAdapter(QString hci)
 
 void Monitor::setDevice(int index)
 {
-    qWarning() << "Setting device..";
+    setStatusMessage("Setting up device...");
+    QApplication::processEvents();
     if (index < 0 || index >= m_devices.count()) {
-        qWarning() << "Device index out of range.";
+	setStatusMessage("No device selected");
         return;
     }
 
@@ -147,11 +149,11 @@ bool Monitor::checkServices(Device* device) const
 
 void Monitor::lookDevices(void)
 {
-    qWarning() << "Looking for devices... ";
+    setStatusMessage("Looking for devices... ");
     QDBusReply<QList<QDBusObjectPath> > slReply = m_adapter->ListDevices();
 
     if (!slReply.isValid()) {
-        qWarning() << "Error: " << slReply.error();
+	setStatusMessage("Error: " + slReply.error().message());
         return;
     }
 
@@ -171,6 +173,7 @@ void Monitor::lookDevices(void)
     }
     m_deviceModel->setStringList(list);
     qDebug() << "done! " << list.count() << " devices found.";
+    setStatusMessage("No device selected");
 }
 
 void Monitor::ValueChanged(const QDBusObjectPath&, const QByteArray& value)
@@ -179,8 +182,16 @@ void Monitor::ValueChanged(const QDBusObjectPath&, const QByteArray& value)
         return;
     qWarning("HR Values: %X %X", value[0], value[1]);
     m_skinContact = value[0] == 4;
+
+    setStatusMessage(m_skinContact ? "No skin contact!" : "Connected" );
     m_value = value[1];
     emit valueChangedSignal();
+}
+
+void Monitor::setStatusMessage(const QString &msg)
+{
+    m_statusMessage = msg;
+    statusChangedSignal();
 }
 
 QAbstractItemModel* Monitor::getDeviceModel() const
