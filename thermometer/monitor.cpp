@@ -41,7 +41,7 @@ public:
     }
 };
 
-Monitor::Monitor(QString hci) : QDBusAbstractAdaptor(QCoreApplication::instance()), m_manager(0), m_adapter(0), m_device(0), m_value(-1), m_skinContact(false), m_hci(hci), m_deviceModel(new DeviceListModel(this))
+Monitor::Monitor(QString hci) : QDBusAbstractAdaptor(QCoreApplication::instance()), m_manager(0), m_adapter(0), m_device(0), m_value(-1), m_hci(hci), m_deviceModel(new DeviceListModel(this))
 {
     QTimer::singleShot(0, this, SLOT(delayedInitialization()));
 }
@@ -178,7 +178,6 @@ void Monitor::ValueChanged(const QDBusObjectPath&, const QByteArray& value)
     if (value.count() < 2)
         return;
     qWarning("HR Values: %X %X", value[0], value[1]);
-    m_skinContact = value[0] == 4;
     m_value = value[1];
     emit valueChangedSignal();
 }

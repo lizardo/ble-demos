@@ -43,7 +43,7 @@ class Monitor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "org.bluez.Watcher")
 
     Q_PROPERTY(int value READ value NOTIFY valueChangedSignal)
-    Q_PROPERTY(bool skinContact READ skinContact NOTIFY valueChangedSignal)
+    Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusChangedSignal)
     Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
 
 public:
@@ -53,13 +53,14 @@ public:
     void setAdapter(QString hci = QString());
 
     int value() const { return m_value; }
-    bool skinContact() const { return m_skinContact; }
+    QString statusMessage() const { return m_statusMessage; }
     QAbstractItemModel* getDeviceModel() const;
 public slots:
     void ValueChanged(const QDBusObjectPath& characteristic, const QByteArray& value);
     void setDevice(int index);
 signals:
     void valueChangedSignal();
+    void statusChangedSignal();
 private slots:
     void delayedInitialization();
 
@@ -69,7 +70,7 @@ private:
     org::bluez::Device* m_device;
     QList<org::bluez::Device*> m_devices;
     int m_value;
-    bool m_skinContact;
+    QString m_statusMessage;
     QString m_hci;
     QStringListModel* m_deviceModel;
 
