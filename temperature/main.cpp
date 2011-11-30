@@ -34,9 +34,12 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     if (!QDBusConnection::systemBus().registerObject(MONITOR_OBJPATH, monitor, QDBusConnection::ExportAllSlots))
         qWarning() << "Error registering myself on D-Bus.";
 
+#ifdef Q_WS_SIMULATOR
+    viewer->addImportPath(QT_INSTALL_PREFIX "/imports/simulatorHarmattan");
+#endif
     viewer->setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer->rootContext()->setContextProperty("monitor", monitor);
-    viewer->setMainQmlFile(QLatin1String("qml/MainMeego.qml"));
+    viewer->setMainQmlFile(QLatin1String("qml/qml/MainMeego.qml"));
     viewer->showExpanded();
 
     return app->exec();
