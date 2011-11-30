@@ -19,36 +19,25 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include <QDeclarativeView>
+#include <QtGui/QApplication>
 #include <QDeclarativeContext>
+#include "qmlapplicationviewer.h"
+
 #include "monitor.h"
 
-
-int main(int argc, char **argv)
+Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QStringList args = app.arguments();
-    QString hci;
-
-    if (args.length() == 2)
-        hci = args.at(1);
+    QScopedPointer<QApplication> app(createApplication(argc, argv));
+    QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
 
     Monitor* monitor = new Monitor;
     if (!QDBusConnection::systemBus().registerObject(MONITOR_OBJPATH, monitor, QDBusConnection::ExportAllSlots))
         qWarning() << "Error registering myself on D-Bus.";
 
+    viewer->setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    viewer->rootContext()->setContextProperty("monitor", monitor);
+    viewer->setMainQmlFile(QLatin1String("qml/MainMeego.qml"));
+    viewer->showExpanded();
 
-    QDeclarativeView view;
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view.rootContext()->setContextProperty("monitor", monitor);
-
-    view.setSource(QUrl("qrc:/qml/MainMeego.qml"));
-
-#ifdef MEEGO_EDITION_HARMATTAN
-    view.showFullScreen();
-#else
-    view.show();
-#endif
-    return app.exec();
+    return app->exec();
 }

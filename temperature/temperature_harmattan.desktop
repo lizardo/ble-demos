@@ -4,8 +4,8 @@ Version=1.0
 Type=Application
 Terminal=false
 Name=temperature
-Exec=/opt/temperature/bin/temperature
-Icon=temperature64
+Exec=/usr/bin/invoker --type=d -s /opt/temperature/bin/temperature
+Icon=/usr/share/icons/hicolor/80x80/apps/temperature80.png
 X-Window-Icon=
 X-HildonDesk-ShowInToolbar=true
 X-Osso-Type=application/x-executable
