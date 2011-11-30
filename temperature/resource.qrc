@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>qml/MonitorView.qml</file>
-        <file>qml/MainMeego.qml</file>
-        <file>qml/Separator.qml</file>
-    </qresource>
-</RCC>
