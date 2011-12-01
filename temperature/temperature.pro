@@ -40,7 +40,9 @@ SOURCES += main.cpp \
     manager.cpp \
     adapter.cpp \
     device.cpp \
-    characteristic.cpp
+    characteristic.cpp \
+    thermometerwatcher.cpp \
+    thermometer.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -61,7 +63,9 @@ HEADERS += \
     adapter.h \
     device.h \
     types.h \
-    characteristic.h
+    characteristic.h \
+    thermometerwatcher.h \
+    thermometer.h
 
 
 
