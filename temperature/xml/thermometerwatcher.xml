@@ -1,0 +1,10 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/test/watcher">
+  <interface name="org.bluez.ThermometerWatcher">
+    <method name="MeasurementReceived">
+      <arg direction="in"  type="a{sv}" name="measure" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+    </method>
+  </interface>
+</node>
