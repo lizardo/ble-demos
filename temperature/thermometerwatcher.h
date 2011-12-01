@@ -14,13 +14,22 @@
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
+#include <QDBusVariant>
+
+#include "adapter.h"
+#include "device.h"
+#include "manager.h"
 #include "types.h"
+
 class QByteArray;
 template<class T> class QList;
 template<class Key, class Value> class QMap;
 class QString;
 class QStringList;
 class QVariant;
+class QStringListModel;
+
+#define COLLECTOR_OBJPATH "/test/watcher"
 
 /*
  * Adaptor class for interface org.bluez.ThermometerWatcher
@@ -37,14 +46,42 @@ class ThermometerWatcherAdaptor: public QDBusAbstractAdaptor
 "    </method>\n"
 "  </interface>\n"
         "")
+
+    Q_PROPERTY(QString value READ get_value NOTIFY valueChangedSignal)
+    Q_PROPERTY(QString statusMessage READ get_time_type NOTIFY valueChangedSignal)
+    Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
+
 public:
-    ThermometerWatcherAdaptor(QObject *parent);
+    ThermometerWatcherAdaptor();
     virtual ~ThermometerWatcherAdaptor();
 
+    QString get_value() const { return m_value; }
+    QString get_time_type() const { return m_timetype; }
+    QAbstractItemModel* getDeviceModel() const;
+    void setAdapter();
+
+signals:
+    void valueChangedSignal();
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void MeasurementReceived(const QVariantMap &measure);
+    void setDevice(int index);
 Q_SIGNALS: // SIGNALS
+private slots:
+    void delayedInitialization();
+
+private:
+    QString m_value;
+    QString m_timetype;
+    org::bluez::Manager* m_manager;
+    org::bluez::Adapter* m_adapter;
+    org::bluez::Device* m_device;
+    QList<org::bluez::Device*> m_devices;
+    QStringListModel* m_deviceModel;
+
+    void lookDevices(void);
+    bool checkServices(org::bluez::Device* device) const;
+    void destroyDevices();
 };
 
 #endif

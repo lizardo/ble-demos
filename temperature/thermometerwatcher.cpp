@@ -8,7 +8,6 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#include "thermometerwatcher.h"
 #include <QtCore/QMetaObject>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -17,25 +16,163 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+#include <QStringListModel>
+
+#include "characteristic.h"
+#include "thermometerwatcher.h"
+#include "thermometer.h"
+
+using namespace org::bluez;
+
+class DeviceListModel : public QStringListModel {
+public:
+    DeviceListModel(QObject* parent) : QStringListModel(parent)
+    {
+        QHash<int, QByteArray> roleNames;
+        roleNames.insert(Qt::DisplayRole, "title");
+        setRoleNames(roleNames);
+    }
+};
+
 /*
  * Implementation of adaptor class ThermometerWatcherAdaptor
  */
 
-ThermometerWatcherAdaptor::ThermometerWatcherAdaptor(QObject *parent)
-    : QDBusAbstractAdaptor(parent)
+ThermometerWatcherAdaptor::ThermometerWatcherAdaptor()
+    : QDBusAbstractAdaptor(QCoreApplication::instance()), m_value("-1"), m_timetype(""), m_manager(0),
+      m_adapter(0), m_device(0), m_deviceModel(new DeviceListModel(this))
 {
     // constructor
     setAutoRelaySignals(true);
+
+    QTimer::singleShot(0, this, SLOT(delayedInitialization()));
 }
 
 ThermometerWatcherAdaptor::~ThermometerWatcherAdaptor()
 {
     // destructor
+    destroyDevices();
+}
+
+void ThermometerWatcherAdaptor::delayedInitialization()
+{
+    m_manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, QDBusConnection::systemBus(), this);
+    setAdapter();
 }
 
 void ThermometerWatcherAdaptor::MeasurementReceived(const QVariantMap &measure)
 {
-    // handle method call org.bluez.ThermometerWatcher.MeasurementReceived
-    QMetaObject::invokeMethod(parent(), "MeasurementReceived", Q_ARG(QVariantMap, measure));
+    qDebug() << "Values: " << measure["Mantissa"].toInt() << measure["Exponent"].toInt() << measure["Unit"].toString();
+
+    float value = measure["Mantissa"].toInt() * powf(10, measure["Exponent"].toInt());
+    m_value = QString::number(value, 'f', 1);
+
+    if (measure["Unit"].toString() == "Celsius")
+        m_value += QString::fromUtf8("\n\u00b0C");
+    else
+        m_value += QString::fromUtf8("\n\u00b0F");
+
+
+    if (measure.keys().contains("Time")) {
+        quint64 tmp = measure["Time"].toULongLong() * 1000;
+        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(tmp);
+        m_timetype = timestamp.toString("ddd MMM d yyyy hh:mm:ss");
+    } else
+        m_timetype = "";
+
+    emit valueChangedSignal();
 }
 
+void ThermometerWatcherAdaptor::setDevice(int index)
+{
+    qWarning() << "Setting device..";
+    if (index < 0 || index >= m_devices.count()) {
+        qWarning() << "Device index out of range.";
+        return;
+    }
+
+    Device* device = m_devices[index];
+    if (m_device == device)
+        return;
+    m_device = device;
+
+    Thermometer thermometer(BLUEZ_SERVICE_NAME, device->path(), QDBusConnection::systemBus());
+    thermometer.RegisterWatcher(QDBusObjectPath(COLLECTOR_OBJPATH));
+}
+
+void ThermometerWatcherAdaptor::setAdapter()
+{
+    if (!m_manager) {
+        qWarning() << "Invalid manager..";
+        return;
+    }
+
+    if (m_adapter) {
+        destroyDevices();
+        delete m_adapter;
+    }
+
+    qWarning() << "Looking for adapter...";
+
+    QDBusReply<QDBusObjectPath> obReply;
+    obReply = m_manager->DefaultAdapter();
+    if (!obReply.isValid()) {
+        qWarning() << "Error:" << obReply.error();
+        return;
+    }
+
+    qDebug() << obReply.value().path();
+
+    m_adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
+                        QDBusConnection::systemBus());
+
+    lookDevices();
+}
+
+bool ThermometerWatcherAdaptor::checkServices(Device* device) const
+{
+    QDBusReply<PropertyMap> properties = device->GetProperties();
+    QVariant uuids = properties.value().value("UUIDs");
+
+    return uuids.toStringList().contains(HEALTH_THERMOMETER_UUID, Qt::CaseInsensitive);
+}
+
+void ThermometerWatcherAdaptor::lookDevices(void)
+{
+    qWarning() << "Looking for devices... ";
+    QDBusReply<QList<QDBusObjectPath> > slReply = m_adapter->ListDevices();
+
+    if (!slReply.isValid()) {
+        qWarning() << "Error: " << slReply.error();
+        return;
+    }
+
+    QList<QDBusObjectPath> obpList = slReply.value();
+    for (int i = 0; i < obpList.count(); i++) {
+        Device* device = new Device(BLUEZ_SERVICE_NAME, obpList[i].path(),QDBusConnection::systemBus());
+        if (checkServices(device))
+            m_devices << device;
+        else
+            delete device;
+    }
+
+    // Fill the device model
+    QStringList list;
+    foreach(Device* d, m_devices) {
+        QDBusReply<PropertyMap> properties = d->GetProperties();
+        list << properties.value().value("Name").toString();
+    }
+    m_deviceModel->setStringList(list);
+    qDebug() << "done! " << list.count() << " devices found.";
+}
+
+void ThermometerWatcherAdaptor::destroyDevices()
+{
+    qDeleteAll(m_devices);
+    m_devices.clear();
+}
+
+QAbstractItemModel* ThermometerWatcherAdaptor::getDeviceModel() const
+{
+    return m_deviceModel;
+}
