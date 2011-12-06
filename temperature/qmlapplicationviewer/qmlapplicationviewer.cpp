@@ -198,3 +198,8 @@ QApplication *createApplication(int &argc, char **argv)
     return new QApplication(argc, argv);
 #endif
 }
+
+QDeclarativeContext *QmlApplicationViewer::rootContext()
+{
+    return d->view->rootContext();
+}
