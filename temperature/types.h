@@ -36,6 +36,5 @@ Q_DECLARE_METATYPE(QVariantMapList)
 #define HT_MEASUREMENT_UUID    "00002A1C-0000-1000-8000-00805F9B34FB"
 #define BLUEZ_SERVICE_NAME     "org.bluez"
 #define BLUEZ_MANAGER_PATH     "/"
-#define PAIRING_AGENT_PATH     "/pairing/agent"
 
 #endif // _TYPES_H_
