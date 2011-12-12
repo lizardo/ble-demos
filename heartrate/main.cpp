@@ -19,36 +19,29 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include <QDeclarativeView>
+#include <QtGui/QApplication>
 #include <QDeclarativeContext>
+#include "qmlapplicationviewer.h"
+
 #include "monitor.h"
 
-
-int main(int argc, char **argv)
+Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QStringList args = app.arguments();
-    QString hci;
+    QScopedPointer<QApplication> app(createApplication(argc, argv));
+    QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
 
-    if (args.length() == 2)
-        hci = args.at(1);
+    Monitor *collector = new Monitor();
 
-    Monitor* monitor = new Monitor;
-    if (!QDBusConnection::systemBus().registerObject(MONITOR_OBJPATH, monitor, QDBusConnection::ExportAllSlots))
+    if (!QDBusConnection::systemBus().registerObject(COLLECTOR_OBJPATH, collector, QDBusConnection::ExportAllSlots))
         qWarning() << "Error registering myself on D-Bus.";
 
-
-    QDeclarativeView view;
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view.rootContext()->setContextProperty("monitor", monitor);
-
-    view.setSource(QUrl("qrc:/qml/MainMeego.qml"));
-
-#ifdef MEEGO_EDITION_HARMATTAN
-    view.showFullScreen();
-#else
-    view.show();
+#ifdef Q_WS_SIMULATOR
+    viewer->addImportPath(QT_INSTALL_PREFIX "/imports/simulatorHarmattan");
 #endif
-    return app.exec();
+    viewer->setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    viewer->rootContext()->setContextProperty("monitor", collector);
+    viewer->setMainQmlFile(QLatin1String("qml/qml/MainMeego.qml"));
+    viewer->showExpanded();
+
+    return app->exec();
 }

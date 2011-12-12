@@ -122,7 +122,7 @@ void Monitor::setDevice(int index)
         QVariantMap props = service.GetProperties().value();
         QString serviceUUID = props["UUID"].toString().toUpper();
         if (serviceUUID == HEART_RATE_UUID) {
-            service.RegisterCharacteristicsWatcher(QDBusObjectPath(MONITOR_OBJPATH));
+            service.RegisterCharacteristicsWatcher(QDBusObjectPath(COLLECTOR_OBJPATH));
 	    qWarning() << "Discovering Characteristics...";
             QList<QDBusObjectPath> paths = service.DiscoverCharacteristics().value();
             foreach (QDBusObjectPath p, paths) {

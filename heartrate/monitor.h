@@ -32,7 +32,7 @@
 #include "device.h"
 #include <QDBusAbstractAdaptor>
 
-#define MONITOR_OBJPATH "/test/watcher"
+#define COLLECTOR_OBJPATH "/test/watcher"
 
 
 class QStringListModel;
