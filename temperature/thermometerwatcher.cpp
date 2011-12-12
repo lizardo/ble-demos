@@ -80,6 +80,9 @@ void ThermometerWatcherAdaptor::MeasurementReceived(const QVariantMap &measure)
     } else
         m_timetype = "";
 
+    if (measure.keys().contains("Type"))
+        m_timetype += QString("Type: ") + measure["Type"].toString();
+
     emit valueChangedSignal();
 }
 
