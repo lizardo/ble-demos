@@ -19,10 +19,10 @@ import QtQuick 1.1
 import com.nokia.meego 1.0
 
 PageStackWindow {
-       signal foo(string bla, int ble)
+    signal foo(string bla, int ble)
 
-       initialPage: monitorView
-        MonitorView {
-            id: monitorView
-       }
+    initialPage: monitorView
+    MonitorView {
+        id: monitorView
+    }
 }
