@@ -21,9 +21,8 @@ import com.nokia.meego 1.0
 PageStackWindow {
        signal foo(string bla, int ble)
 
-       initialPage: Page {
-        orientationLock: PageOrientation.LockPortrait
-        MonitorView { id: monitorView }
+       initialPage: monitorView
+        MonitorView {
+            id: monitorView
        }
 }
-

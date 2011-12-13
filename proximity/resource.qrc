@@ -1,14 +1,13 @@
 <RCC>
-	<qresource prefix="/">
-		<file>qml/MonitorView.qml</file>
-                <file>qml/MainMeego.qml</file>
-		<file>qml/DeviceListItem.qml</file>
-		<file>qml/Slider.qml</file>
-		<file>qml/images/off.png</file>
-		<file>qml/images/knob.png</file>
-		<file>qml/images/list_bg.png</file>
-		<file>qml/images/header.png</file>
-		<file>qml/images/content_bg_signal.png</file>
-		<file>qml/images/content_bg_alerts.png</file>
-	</qresource>
+    <qresource prefix="/">
+        <file>qml/MonitorView.qml</file>
+        <file>qml/MainMeego.qml</file>
+        <file>qml/DeviceListItem.qml</file>
+        <file>qml/images/off.png</file>
+        <file>qml/images/knob.png</file>
+        <file>qml/images/list_bg.png</file>
+        <file>qml/images/header.png</file>
+        <file>qml/images/content_bg_signal.png</file>
+        <file>qml/images/content_bg_alerts.png</file>
+    </qresource>
 </RCC>

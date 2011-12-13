@@ -17,13 +17,14 @@
 */
 
 import Qt 4.7
+import QtQuick 1.1
+import com.nokia.meego 1.0
 
-Rectangle {
+Page {
 	id: monitorView
 	width: 480; height: 800;
+        orientationLock: PageOrientation.LockPortrait
 	signal foo(string bla, int ble)
-
-	color: "#3F303A"
 
 	Image {
 		id: header
@@ -130,13 +131,18 @@ Rectangle {
 			id: pathlossLevel
 			objectName: "pathlossLevel"
 
+                        stepSize:1
+                        valueIndicatorVisible: false
+                        minimumValue:0
+                        maximumValue:2
+                        value: 0
+
 			anchors.horizontalCenter: pathloss_bg.horizontalCenter
 			anchors.top: labelPathloss.bottom
 			anchors.topMargin: 15
 
-			Connections {
-				target: pathlossLevel
-                                onValueChanged: monitor.onPathlossChange(pathlossLevel.value)
+                        onValueChanged: {
+                            monitor.onPathlossChange(pathlossLevel.value)
 			}
 
 		}
@@ -165,14 +171,19 @@ Rectangle {
 			id: immediateAlert
 			objectName: "immediateAlert"
 
+                        stepSize:1
+                        valueIndicatorVisible: false
+                        minimumValue:0
+                        maximumValue:2
+                        value: 0
+
 			anchors.horizontalCenter: immediate_bg.horizontalCenter
 			anchors.top: labelImmediate.bottom
 			anchors.topMargin: 15
 
-			Connections {
-				target: immediateAlert
-				onValueChanged: monitor.onImmediateAlertChange(immediateAlert.value)
-				}
+                        onValueChanged: {
+                            monitor.onImmediateAlertChange(immediateAlert.value)
+                        }
 		}
 
 		Image {
@@ -199,14 +210,19 @@ Rectangle {
 			id: linkloss
 			objectName: "linkloss"
 
+                        stepSize:1
+                        valueIndicatorVisible: false
+                        minimumValue:0
+                        maximumValue:2
+                        value: 0
+
 			anchors.horizontalCenter: linkloss_bg.horizontalCenter
 			anchors.top: labelLinkloss.bottom
 			anchors.topMargin: 15
 
-			Connections {
-				target: linkloss
-				onValueChanged: { monitor.onLinkLossChange(linkloss.value) }
-			}
+                        onValueChanged: {
+                            monitor.onLinkLossChange(linkloss.value)
+                        }
 		}
 
 		Connections {
@@ -250,9 +266,9 @@ Rectangle {
                                 signalLevel.text = value
                                 //pathlossLevel.setValue(valueToInt(property, value))
                         } else if (property == "ImmediateAlertLevel") {
-				immediateAlert.setValue(valueToInt(property, value))
+				immediateAlert.value = valueToInt(property, value)
                         } else if (property == "LinkLossAlertLevel") {
-				linkloss.setValue(valueToInt(property, value))
+				linkloss.value = valueToInt(property, value)
                         }
 		}
 	}
