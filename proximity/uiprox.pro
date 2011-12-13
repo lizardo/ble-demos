@@ -58,38 +58,3 @@ unix:!symbian:!maemo5 {
     target.path = /opt/uiprox/bin
     INSTALLS += target
 }
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
-
-unix:!symbian:!maemo5 {
-    target.path = /opt/uiprox/bin
-    INSTALLS += target
-}
