@@ -46,20 +46,20 @@ Monitor::Monitor(QString hci)
     : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
       m_threshold(-1)
 {
-	QDBusConnection dbus = QDBusConnection::systemBus();
+    QDBusConnection dbus = QDBusConnection::systemBus();
 
-	manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
+    manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
 
-	setAdapter(hci);
+    setAdapter(hci);
 
-	QTimer::singleShot(3000, this, SIGNAL(dummy()));
+    QTimer::singleShot(3000, this, SIGNAL(dummy()));
 }
 
 
 void Monitor::lock()
 {
 
-qDebug() << "lock:";
+    qDebug() << "lock:";
 
 /*
 QDBusConnection bus = QDBusConnection::sessionBus();
@@ -69,9 +69,9 @@ QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
 qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 */
 
-QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+    QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
 
-QList<QVariant> args;
+    QList<QVariant> args;
     args << "locked";
     m.setArguments(args);
 
@@ -81,7 +81,7 @@ QList<QVariant> args;
 void Monitor::unlock()
 {
 
-qDebug() << "unlock:";
+    qDebug() << "unlock:";
 
 /*
 QDBusConnection bus = QDBusConnection::sessionBus();
@@ -91,9 +91,9 @@ QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
 qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 */
 
-QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+    QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
 
-QList<QVariant> args;
+    QList<QVariant> args;
     args << "unlocked";
     m.setArguments(args);
 
@@ -102,89 +102,89 @@ QList<QVariant> args;
 
 Monitor::~Monitor()
 {
-	destroyDevices();
+    destroyDevices();
 }
 
 void Monitor::destroyDevices()
 {
-	while (!devices.isEmpty())
-		delete devices.takeFirst();
+    while (!devices.isEmpty())
+        delete devices.takeFirst();
 
     delete m_deviceModel;
 }
 
 void Monitor::setAdapter(QString hci)
 {
-	if (manager == NULL) {
-		qWarning() << "Invalid manager..";
-		return;
-	}
+    if (manager == NULL) {
+        qWarning() << "Invalid manager..";
+        return;
+    }
 
-	if (adapter) {
-		destroyDevices();
-		delete adapter;
-	}
+    if (adapter) {
+        destroyDevices();
+        delete adapter;
+    }
 
-	qWarning() << "Looking for adapter...";
-	QDBusReply<QDBusObjectPath> obReply;
-	if (hci.isEmpty())
-		obReply = manager->DefaultAdapter();
-	else
-		obReply = manager->FindAdapter(hci);
+    qWarning() << "Looking for adapter...";
+    QDBusReply<QDBusObjectPath> obReply;
+    if (hci.isEmpty())
+        obReply = manager->DefaultAdapter();
+    else
+        obReply = manager->FindAdapter(hci);
 
-	if (!obReply.isValid()) {
-		qWarning() << "Error:" << obReply.error();
-		return;
-	}
+    if (!obReply.isValid()) {
+        qWarning() << "Error:" << obReply.error();
+        return;
+    }
 
-	qDebug() << obReply.value().path();
+    qDebug() << obReply.value().path();
 
-	adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
-						QDBusConnection::systemBus());
+    adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
+                        QDBusConnection::systemBus());
 
-	lookDevices();
+    lookDevices();
 }
 
 void Monitor::setDevice(int index)
 {
-	device = devices.at(index);
+    device = devices.at(index);
 
-	qWarning() << "Checking proximity capacity...";
-	proximity = new Proximity(BLUEZ_SERVICE_NAME,
-				device->path(), QDBusConnection::systemBus());
+    qWarning() << "Checking proximity capacity...";
+    proximity = new Proximity(BLUEZ_SERVICE_NAME,
+                device->path(), QDBusConnection::systemBus());
 
-	QObject::connect(
-		proximity,
-		SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
-		this,
-		SLOT(propertyChanged(const QString &, const QDBusVariant &)));
+    QObject::connect(
+        proximity,
+        SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
+        this,
+        SLOT(propertyChanged(const QString &, const QDBusVariant &)));
 
-	QDBusReply<PropertyMap> properties = proximity->GetProperties();
-	if (!properties.isValid()) {
-		qDebug() << "Error: " << properties.error();
-		exit(1);
-	}
+    QDBusReply<PropertyMap> properties = proximity->GetProperties();
+    if (!properties.isValid()) {
+        qDebug() << "Error: " << properties.error();
+        exit(1);
+    }
 
-	QMap<QString, QVariant> p = properties.value();
-	foreach (QString k, properties.value().keys())
-		propertyChanged(k, QDBusVariant(p.value(k)));
+    QMap<QString, QVariant> p = properties.value();
+    foreach (QString k, properties.value().keys())
+        propertyChanged(k, QDBusVariant(p.value(k)));
 }
 
 void Monitor::checkServices(QString path)
 {
-	Device *device = new Device(BLUEZ_SERVICE_NAME, path,
-					QDBusConnection::systemBus());
+    Device *device = new Device(BLUEZ_SERVICE_NAME, path,
+                    QDBusConnection::systemBus());
 
-	QDBusReply<PropertyMap> properties = device->GetProperties();
+    QDBusReply<PropertyMap> properties = device->GetProperties();
 
-	QVariant uuids = properties.value().value("UUIDs");
+    QVariant uuids = properties.value().value("UUIDs");
 
-	if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
-		devices.append(device);
-		return;
-	}
+    if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
+        devices.append(device);
+        return;
+    }
 
-	delete device;
+    delete device;
 }
 
 QStringList Monitor::devicesName()
@@ -202,20 +202,20 @@ QStringList Monitor::devicesName()
 
 void Monitor::lookDevices(void)
 {
-	qWarning() << "Looking for devices... ";
-	QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
-	QList<QDBusObjectPath> list;
+    qWarning() << "Looking for devices... ";
+    QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
+    QList<QDBusObjectPath> list;
     QStringList device_name;
 
-	if (!slReply.isValid()) {
-		qWarning() << "Error: " << slReply.error();
-		return;
-	}
+    if (!slReply.isValid()) {
+        qWarning() << "Error: " << slReply.error();
+        return;
+    }
 
-	list = slReply.value();
-	for (int i = 0; i < list.count(); i++) {
-		checkServices(list.at(i).path());
-	}
+    list = slReply.value();
+    for (int i = 0; i < list.count(); i++) {
+        checkServices(list.at(i).path());
+    }
 
     device_name = devicesName();
     m_deviceModel->setStringList(device_name);
@@ -237,10 +237,10 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 
         qWarning() << property << m_threshold << v;
 
-            if (m_threshold > v)
-                lock();
-            else
-                unlock();
+        if (m_threshold > v)
+            lock();
+        else
+            unlock();
     }
 
     emit propertyValue(property, value.variant().toString());
@@ -248,42 +248,41 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 
 void Monitor::onImmediateAlertChange(int value)
 {
-	QVariant arg;
+    QVariant arg;
 
-	switch (value) {
-	case 0:
-		arg = QString("none");
-		break;
-	case 1:
-		arg = QString("mild");
-		break;
-	case 2:
-		arg = QString("high");
-		break;
-	}
+    switch (value) {
+    case 0:
+        arg = QString("none");
+        break;
+    case 1:
+        arg = QString("mild");
+        break;
+    case 2:
+        arg = QString("high");
+        break;
+    }
 
-	proximity->SetProperty("ImmediateAlertLevel", QDBusVariant(arg));
+    proximity->SetProperty("ImmediateAlertLevel", QDBusVariant(arg));
 }
 
 void Monitor::onLinkLossChange(int value)
 {
-	QVariant arg;
+    QVariant arg;
 
-	switch (value) {
-	case 0:
-		arg = QString("none");
-		break;
-	case 1:
-		arg = QString("mild");
-		break;
-	case 2:
-		arg = QString("high");
-		break;
-	}
+    switch (value) {
+    case 0:
+        arg = QString("none");
+        break;
+    case 1:
+        arg = QString("mild");
+        break;
+    case 2:
+        arg = QString("high");
+        break;
+    }
 
-	proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
+    proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
 }
-
 
 void Monitor::onPathlossChange(int value)
 {

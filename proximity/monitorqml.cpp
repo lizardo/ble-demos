@@ -28,34 +28,34 @@
 #include "monitorqml.h"
 
 MonitorView::MonitorView(Monitor *monitor)
-	: model(monitor)
+    : model(monitor)
 {
-	rootContext()->setContextProperty("monitor", model);
+    rootContext()->setContextProperty("monitor", model);
 
 #ifdef MEEGO_EDITION_HARMATTAN
-	setSource(QUrl("qrc:/qml/MainMeego.qml"));
-	setAttribute(Qt::WA_LockPortraitOrientation, true);
-	setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    setSource(QUrl("qrc:/qml/MainMeego.qml"));
+    setAttribute(Qt::WA_LockPortraitOrientation, true);
+    setResizeMode(QDeclarativeView::SizeRootObjectToView);
 #else
-	setSource(QUrl("qrc:/qml/MonitorView.qml"));
+    setSource(QUrl("qrc:/qml/MonitorView.qml"));
 #endif
 
-	QGraphicsObject *r = rootObject();
+    QGraphicsObject *r = rootObject();
 
-	connect(r, SIGNAL(foo(QString, int)), this, SLOT(bar(QString, int)));
+    connect(r, SIGNAL(foo(QString, int)), this, SLOT(bar(QString, int)));
 
-	devices = r->findChild<QObject *>("listView");
+    devices = r->findChild<QObject *>("listView");
 
-	connect(devices, SIGNAL(currentIndexChanged()),
-		this, SLOT(onDevicesClick()));
+    connect(devices, SIGNAL(currentIndexChanged()),
+        this, SLOT(onDevicesClick()));
 }
 
 void MonitorView::bar(QString s, int i)
 {
-	qWarning() << s << i;
+    qWarning() << s << i;
 }
 
 void MonitorView::onDevicesClick()
 {
-	model->setDevice(devices->property("currentIndex").toInt());
+    model->setDevice(devices->property("currentIndex").toInt());
 }

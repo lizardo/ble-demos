@@ -26,30 +26,28 @@
 #include "adapter.h"
 #include "proximity.h"
 
-//#include "monitorview.h"
 #include "monitorqml.h"
 #include "monitor.h"
 
-
 int main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
-	QStringList args = app.arguments();
-	QString hci;
+    QApplication app(argc, argv);
+    QStringList args = app.arguments();
+    QString hci;
 
-	if (args.length() == 2)
-		hci = args.at(1);
+    if (args.length() == 2)
+        hci = args.at(1);
 
-	QDBusConnection dbus = QDBusConnection::systemBus();
+    QDBusConnection dbus = QDBusConnection::systemBus();
 
-	Monitor *monitor = new Monitor(hci);
+    Monitor *monitor = new Monitor(hci);
 
-	MonitorView *monitorView = new MonitorView(monitor);
+    MonitorView *monitorView = new MonitorView(monitor);
 
 #ifdef MEEGO_EDITION_HARMATTAN
-        monitorView->showFullScreen();
+    monitorView->showFullScreen();
 #else
-        monitorView->show();
+    monitorView->show();
 #endif
-	app.exec();
+    app.exec();
 }

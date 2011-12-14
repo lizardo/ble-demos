@@ -37,49 +37,49 @@ using namespace org::bluez;
 
 class Monitor: public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
     Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
 public:
-	Monitor(QString hci = QString());
-	~Monitor();
+    Monitor(QString hci = QString());
+    ~Monitor();
 
-	void setAdapter(QString hci);
+    void setAdapter(QString hci);
 
     QAbstractItemModel* getDeviceModel() const;
 
 signals:
-	void alarm(QString type);
-	void propertyValue(QString property, QString value);
-	void dummy();
+    void alarm(QString type);
+    void propertyValue(QString property, QString value);
+    void dummy();
 
 public slots:
-	void propertyChanged(const QString &property, const QDBusVariant &value);
+    void propertyChanged(const QString &property, const QDBusVariant &value);
 
-	void onLinkLossChange(int value);
-	void onImmediateAlertChange(int value);
+    void onLinkLossChange(int value);
+    void onImmediateAlertChange(int value);
 
-        void onPathlossChange(int value);
+    void onPathlossChange(int value);
     void setDevice(int index);
 
 private:
-	Manager *manager;
-	Adapter *adapter;
-	Proximity *proximity;
-	Device *device;
-	QList<Device *> devices;
+    Manager *manager;
+    Adapter *adapter;
+    Proximity *proximity;
+    Device *device;
+    QList<Device *> devices;
 
     QStringListModel* m_deviceModel;
 
-        int m_threshold;
+    int m_threshold;
 
-	void lookDevices(void);
-	void destroyDevices();
-	void checkServices(QString path);
+    void lookDevices(void);
+    void destroyDevices();
+    void checkServices(QString path);
     QStringList devicesName();
 
-        void unlock();
-        void lock();
+    void unlock();
+    void lock();
 };
 
 #endif
