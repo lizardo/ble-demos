@@ -231,28 +231,28 @@ Page {
     }
 
     function valueToInt(property, value) {
-        if (property == "Threshold") {
-            if (value == "low")
+        if (property === "Threshold") {
+            if (value === "low")
                 return 0;
-            else if (value == 'medium')
+            else if (value === 'medium')
                 return 1;
-            else if (value == 'high')
+            else if (value === 'high')
                 return 2;
-        } else if (property == "SignalLevel") {
-            if (value == 'weak')
+        } else if (property === "SignalLevel") {
+            if (value === 'weak')
                 return 0;
-            if (value == 'unknown')
+            if (value === 'unknown')
                 return 0;
-            else if (value == 'regular')
+            else if (value === 'regular')
                 return 1;
-            else if (value == 'good')
+            else if (value === 'good')
                 return 2;
         } else {
-            if (value == 'none')
+            if (value === 'none')
                 return 0;
-            else if (value == 'mild')
+            else if (value === 'mild')
                 return 1;
-            else if (value == 'high')
+            else if (value === 'high')
                 return 2;
         }
     }
@@ -260,12 +260,12 @@ Page {
     Connections {
         target: monitor
         onPropertyValue: {
-            if (property == "SignalLevel") {
+            if (property === "SignalLevel") {
                 signalLevel.text = value
                 //pathlossLevel.setValue(valueToInt(property, value))
-            } else if (property == "ImmediateAlertLevel") {
+            } else if (property === "ImmediateAlertLevel") {
                 immediateAlert.value = valueToInt(property, value)
-            } else if (property == "LinkLossAlertLevel") {
+            } else if (property === "LinkLossAlertLevel") {
                 linkloss.value = valueToInt(property, value)
             }
         }
