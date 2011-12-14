@@ -34,7 +34,6 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
     qtc_packaging/debian_harmattan/changelog \
-    qml/DeviceListItem.qml \
     qml/MonitorView.qml \
     qml/images/knob.png \
     qml/images/off.png \

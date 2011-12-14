@@ -45,9 +45,7 @@ public:
 	~Monitor();
 
 	void setAdapter(QString hci);
-	void setDevice(int index);
 
-	Q_INVOKABLE QStringList devicesName();
     QAbstractItemModel* getDeviceModel() const;
 
 signals:
@@ -62,6 +60,7 @@ public slots:
 	void onImmediateAlertChange(int value);
 
         void onPathlossChange(int value);
+    void setDevice(int index);
 
 private:
 	Manager *manager;
@@ -77,6 +76,7 @@ private:
 	void lookDevices(void);
 	void destroyDevices();
 	void checkServices(QString path);
+    QStringList devicesName();
 
         void unlock();
         void lock();

@@ -19,6 +19,7 @@
 import Qt 4.7
 import QtQuick 1.1
 import com.nokia.meego 1.0
+import com.nokia.extras 1.1
 
 Page {
     id: monitorView
@@ -56,8 +57,16 @@ Page {
 
         anchors.fill: list_bg
 
-        model: monitor.devicesName()
-        delegate: DeviceListItem {}
+        model: monitor.deviceModel
+        delegate: ListDelegate {
+            titleColor: "#E4EAF1"
+            titleSize: 36
+            height: 50
+            onClicked: {
+                monitor.setDevice(index)
+                contentView.enabled = true
+            }
+        }
         clip: true
         highlight: Rectangle { color: "#02118A"; radius: 5 }
     }
@@ -222,11 +231,6 @@ Page {
             onValueChanged: {
                 monitor.onLinkLossChange(linkloss.value)
             }
-        }
-
-        Connections {
-            target: listView
-            onCurrentItemChanged: {contentView.enabled = true }
         }
     }
 

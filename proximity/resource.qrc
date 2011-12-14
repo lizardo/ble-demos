@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>qml/MonitorView.qml</file>
         <file>qml/MainMeego.qml</file>
-        <file>qml/DeviceListItem.qml</file>
         <file>qml/images/off.png</file>
         <file>qml/images/knob.png</file>
         <file>qml/images/list_bg.png</file>
