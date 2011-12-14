@@ -18,16 +18,9 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QObject>
-#include <QWidget>
-#include <QtDBus>
-
-#include <QTime>
 #include <QStringListModel>
 
 #include "monitor.h"
-#include "device.h"
-#include "types.h"
 
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
@@ -42,7 +35,7 @@ public:
     }
 };
 
-Monitor::Monitor(QString hci)
+Monitor::Monitor()
     : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
       m_threshold(-1)
 {
@@ -50,9 +43,7 @@ Monitor::Monitor(QString hci)
 
     manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
 
-    setAdapter(hci);
-
-    QTimer::singleShot(3000, this, SIGNAL(dummy()));
+    setAdapter();
 }
 
 
@@ -113,7 +104,7 @@ void Monitor::destroyDevices()
     delete m_deviceModel;
 }
 
-void Monitor::setAdapter(QString hci)
+void Monitor::setAdapter()
 {
     if (manager == NULL) {
         qWarning() << "Invalid manager..";
@@ -127,10 +118,8 @@ void Monitor::setAdapter(QString hci)
 
     qWarning() << "Looking for adapter...";
     QDBusReply<QDBusObjectPath> obReply;
-    if (hci.isEmpty())
-        obReply = manager->DefaultAdapter();
-    else
-        obReply = manager->FindAdapter(hci);
+
+    obReply = manager->DefaultAdapter();
 
     if (!obReply.isValid()) {
         qWarning() << "Error:" << obReply.error();

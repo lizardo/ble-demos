@@ -19,10 +19,6 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QObject>
-#include <QDBusVariant>
-#include <QList>
-
 #include "device.h"
 #include "manager.h"
 #include "adapter.h"
@@ -41,17 +37,16 @@ class Monitor: public QObject
 
     Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
 public:
-    Monitor(QString hci = QString());
+    Monitor();
     ~Monitor();
 
-    void setAdapter(QString hci);
+    void setAdapter();
 
     QAbstractItemModel* getDeviceModel() const;
 
 signals:
     void alarm(QString type);
     void propertyValue(QString property, QString value);
-    void dummy();
 
 public slots:
     void propertyChanged(const QString &property, const QDBusVariant &value);

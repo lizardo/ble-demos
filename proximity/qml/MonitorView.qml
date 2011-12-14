@@ -17,7 +17,6 @@
 */
 
 import Qt 4.7
-import QtQuick 1.1
 import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 
@@ -25,8 +24,6 @@ Page {
     id: monitorView
     width: 480; height: 800;
     orientationLock: PageOrientation.LockPortrait
-
-    signal foo(string bla, int ble)
 
     Image {
         id: header
@@ -234,31 +231,14 @@ Page {
         }
     }
 
+    // It must be used only for ImmediateAlertLevel and LinkLossAlertLevel
     function valueToInt(property, value) {
-        if (property === "Threshold") {
-            if (value === "low")
-                return 0;
-            else if (value === 'medium')
-                return 1;
-            else if (value === 'high')
-                return 2;
-        } else if (property === "SignalLevel") {
-            if (value === 'weak')
-                return 0;
-            if (value === 'unknown')
-                return 0;
-            else if (value === 'regular')
-                return 1;
-            else if (value === 'good')
-                return 2;
-        } else {
-            if (value === 'none')
-                return 0;
-            else if (value === 'mild')
-                return 1;
-            else if (value === 'high')
-                return 2;
-        }
+        if (value === 'none')
+            return 0;
+        else if (value === 'mild')
+            return 1;
+        else if (value === 'high')
+            return 2;
     }
 
     Connections {
@@ -266,7 +246,6 @@ Page {
         onPropertyValue: {
             if (property === "SignalLevel") {
                 signalLevel.text = value
-                //pathlossLevel.setValue(valueToInt(property, value))
             } else if (property === "ImmediateAlertLevel") {
                 immediateAlert.value = valueToInt(property, value)
             } else if (property === "LinkLossAlertLevel") {
