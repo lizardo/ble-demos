@@ -205,7 +205,7 @@ QStringList Monitor::devicesName()
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
-        int v;
+        int v = -1;
 
         if (value.variant().toString() == "unknown")
             v = -1;
