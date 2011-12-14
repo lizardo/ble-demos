@@ -205,6 +205,7 @@ QStringList Monitor::devicesName()
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
 {
+    if (property == "SignalLevel") {
         int v = -1;
 
         if (value.variant().toString() == "unknown")
@@ -218,14 +219,13 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 
         qWarning() << property << m_threshold << v;
 
-        if (property == "SignalLevel") {
             if (m_threshold > v)
                 lock();
             else
                 unlock();
-        }
+    }
 
-        emit propertyValue(property, value.variant().toString());
+    emit propertyValue(property, value.variant().toString());
 }
 
 void Monitor::onImmediateAlertChange(int value)
