@@ -28,6 +28,8 @@
 #include "adapter.h"
 #include "proximity.h"
 
+class QStringListModel;
+
 #ifndef MONITOR_H
 #define MONITOR_H
 
@@ -36,6 +38,8 @@ using namespace org::bluez;
 class Monitor: public QObject
 {
 	Q_OBJECT
+
+    Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
 public:
 	Monitor(QString hci = QString());
 	~Monitor();
@@ -44,6 +48,7 @@ public:
 	void setDevice(int index);
 
 	Q_INVOKABLE QStringList devicesName();
+    QAbstractItemModel* getDeviceModel() const;
 
 signals:
 	void alarm(QString type);
@@ -64,6 +69,8 @@ private:
 	Proximity *proximity;
 	Device *device;
 	QList<Device *> devices;
+
+    QStringListModel* m_deviceModel;
 
         int m_threshold;
 

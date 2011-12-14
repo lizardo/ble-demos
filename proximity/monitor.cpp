@@ -23,6 +23,7 @@
 #include <QtDBus>
 
 #include <QTime>
+#include <QStringListModel>
 
 #include "monitor.h"
 #include "device.h"
@@ -31,8 +32,19 @@
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
+class DeviceListModel : public QStringListModel {
+public:
+    DeviceListModel(QObject* parent) : QStringListModel(parent)
+    {
+        QHash<int, QByteArray> roleNames;
+        roleNames.insert(Qt::DisplayRole, "title");
+        setRoleNames(roleNames);
+    }
+};
+
 Monitor::Monitor(QString hci)
-    : manager(NULL), adapter(NULL), device(NULL), m_threshold(-1)
+    : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
+      m_threshold(-1)
 {
 	QDBusConnection dbus = QDBusConnection::systemBus();
 
@@ -97,6 +109,8 @@ void Monitor::destroyDevices()
 {
 	while (!devices.isEmpty())
 		delete devices.takeFirst();
+
+    delete m_deviceModel;
 }
 
 void Monitor::setAdapter(QString hci)
@@ -173,11 +187,25 @@ void Monitor::checkServices(QString path)
 	delete device;
 }
 
+QStringList Monitor::devicesName()
+{
+    QStringList list;
+
+    foreach(Device *d, devices) {
+        QDBusReply<PropertyMap> properties = d->GetProperties();
+
+        list << QVariant(properties.value().value("Name")).toString();
+    }
+
+    return list;
+}
+
 void Monitor::lookDevices(void)
 {
 	qWarning() << "Looking for devices... ";
 	QDBusReply<QList<QDBusObjectPath> > slReply = adapter->ListDevices();
 	QList<QDBusObjectPath> list;
+    QStringList device_name;
 
 	if (!slReply.isValid()) {
 		qWarning() << "Error: " << slReply.error();
@@ -188,19 +216,9 @@ void Monitor::lookDevices(void)
 	for (int i = 0; i < list.count(); i++) {
 		checkServices(list.at(i).path());
 	}
-}
 
-QStringList Monitor::devicesName()
-{
-	QStringList list;
-
-	foreach(Device *d, devices) {
-		QDBusReply<PropertyMap> properties = d->GetProperties();
-
-		list << QVariant(properties.value().value("Name")).toString();
-	}
-
-	return list;
+    device_name = devicesName();
+    m_deviceModel->setStringList(device_name);
 }
 
 void Monitor::propertyChanged(const QString &property, const QDBusVariant &value)
@@ -271,4 +289,9 @@ void Monitor::onPathlossChange(int value)
 {
     qWarning() << "mthreshold:" << m_threshold << value;
     m_threshold = value;
+}
+
+QAbstractItemModel* Monitor::getDeviceModel() const
+{
+    return m_deviceModel;
 }
