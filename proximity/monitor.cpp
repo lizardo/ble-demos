@@ -284,7 +284,7 @@ void Monitor::onLinkLossChange(int value)
     proximity->SetProperty("LinkLossAlertLevel", QDBusVariant(arg));
 }
 
-void Monitor::onPathlossChange(int value)
+void Monitor::onUnlockChange(int value)
 {
     m_threshold = value;
 }

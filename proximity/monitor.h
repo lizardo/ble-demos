@@ -54,7 +54,7 @@ public slots:
     void onLinkLossChange(int value);
     void onImmediateAlertChange(int value);
 
-    void onPathlossChange(int value);
+    void onUnlockChange(int value);
     void setDevice(int index);
 
 private:

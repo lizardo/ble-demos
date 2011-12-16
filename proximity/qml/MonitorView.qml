@@ -72,7 +72,7 @@ Page {
         id: contentView
         width: parent.width; height: 400
         anchors.top: list_bg.bottom
-        // Hack to add a not planned pathloss slider without change the list bg image
+        // Hack to add a not planned unlock slider without change the list bg image
         anchors.topMargin: -142
 
         enabled: false
@@ -114,28 +114,28 @@ Page {
         }
 
         Image {
-            id: pathloss_bg
+            id: unlock_bg
             source: "images/content_bg_alerts.png"
 
             anchors.top: signal_bg.bottom
         }
 
         Text {
-            id: labelPathloss
+            id: labelUnlock
             text: "Unlock on signal level:"
 
             color: "#768EA5"
             font.pixelSize: 32
 
-            anchors.top: pathloss_bg.top
-            anchors.left: pathloss_bg.left
+            anchors.top: unlock_bg.top
+            anchors.left: unlock_bg.left
             anchors.topMargin: 20
             anchors.leftMargin: 10
         }
 
         Slider {
-            id: pathlossLevel
-            objectName: "pathlossLevel"
+            id: unlockThreshold
+            objectName: "unlockThreshold"
 
             stepSize:1
             valueIndicatorVisible: true
@@ -143,12 +143,12 @@ Page {
             maximumValue:2
             value: -1
 
-            anchors.horizontalCenter: pathloss_bg.horizontalCenter
-            anchors.top: labelPathloss.bottom
+            anchors.horizontalCenter: unlock_bg.horizontalCenter
+            anchors.top: labelUnlock.bottom
             anchors.topMargin: 15
 
             onValueChanged: {
-                monitor.onPathlossChange(pathlossLevel.value)
+                monitor.onUnlockChange(unlockThreshold.value)
             }
 
             function formatValue(v) {
@@ -169,7 +169,7 @@ Page {
             id: immediate_bg
             source: "images/content_bg_alerts.png"
 
-            anchors.top: pathloss_bg.bottom
+            anchors.top: unlock_bg.bottom
         }
 
         Text {
