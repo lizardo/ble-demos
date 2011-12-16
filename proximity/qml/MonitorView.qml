@@ -177,7 +177,7 @@ Page {
             objectName: "immediateAlert"
 
             stepSize:1
-            valueIndicatorVisible: false
+            valueIndicatorVisible: true
             minimumValue:0
             maximumValue:2
             value: 0
@@ -188,6 +188,17 @@ Page {
 
             onValueChanged: {
                 monitor.onImmediateAlertChange(immediateAlert.value)
+            }
+
+            function formatValue(v) {
+                switch(v) {
+                case 0:
+                    return "none";
+                case 1:
+                    return "mild";
+                 default:
+                     return "high";
+                }
             }
         }
 
@@ -216,7 +227,7 @@ Page {
             objectName: "linkloss"
 
             stepSize:1
-            valueIndicatorVisible: false
+            valueIndicatorVisible: true
             minimumValue:0
             maximumValue:2
             value: 0
@@ -227,6 +238,17 @@ Page {
 
             onValueChanged: {
                 monitor.onLinkLossChange(linkloss.value)
+            }
+
+            function formatValue(v) {
+                switch(v) {
+                case 0:
+                    return "none";
+                case 1:
+                    return "mild";
+                 default:
+                     return "high";
+                }
             }
         }
     }
