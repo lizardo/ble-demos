@@ -25,6 +25,10 @@
 typedef QMap<QString, QVariant> PropertyMap;
 Q_DECLARE_METATYPE(PropertyMap)
 
+// This flag will control when the lock will work if SignalLevel is
+// "unknown".
+static bool canLock = false;
+
 class DeviceListModel : public QStringListModel {
 public:
     DeviceListModel(QObject* parent) : QStringListModel(parent)
@@ -49,9 +53,6 @@ Monitor::Monitor()
 
 void Monitor::lock()
 {
-
-    qDebug() << "lock:";
-
 /*
 QDBusConnection bus = QDBusConnection::sessionBus();
 QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
@@ -60,20 +61,21 @@ QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
 qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 */
 
-    QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+    qDebug() << "lock";
 
-    QList<QVariant> args;
-    args << "locked";
-    m.setArguments(args);
+    if (canLock) {
+        QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                                        "com.nokia.mce.request", "req_tklock_mode_change");
+        QList<QVariant> args;
+        args << "locked";
+        m.setArguments(args);
 
-    QDBusConnection::systemBus().send(m);
+        QDBusConnection::systemBus().send(m);
+     }
 }
 
 void Monitor::unlock()
 {
-
-    qDebug() << "unlock:";
-
 /*
 QDBusConnection bus = QDBusConnection::sessionBus();
 QDBusInterface dbus_iface("com.nokia.mce",  "/com/nokia/mce/request",
@@ -83,12 +85,15 @@ qDebug() << dbus_iface.call("req_tklock_mode_change").arguments().at(0);
 */
 
     QDBusMessage m = QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request", "com.nokia.mce.request", "req_tklock_mode_change");
+
+    qDebug() << "unlock";
 
     QList<QVariant> args;
     args << "unlocked";
     m.setArguments(args);
 
     QDBusConnection::systemBus().send(m);
+    canLock = true;
 }
 
 Monitor::~Monitor()
@@ -217,20 +222,26 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
 
         if (value.variant().toString() == "unknown")
             v = -1;
-        else if (value.variant().toString() == "weak")
-            v = 0;
-        else if (value.variant().toString() == "regular")
-            v = 1;
-        else if (value.variant().toString() == "good")
-            v = 2;
+        else {
+            canLock = true;
+            if (value.variant().toString() == "weak")
+                v = 0;
+            else if (value.variant().toString() == "regular")
+                v = 1;
+            else if (value.variant().toString() == "good")
+                v = 2;
+        }
 
-        qWarning() << property << m_threshold << v;
-
-        if (m_threshold > v)
-            lock();
-        else
-            unlock();
+        // If m_threshold is -1 so the lock/unlock is disabled. Nothing to do
+        if (m_threshold != -1) {
+            if (m_threshold > v)
+                lock();
+            else
+                unlock();
+        }
     }
+
+    qDebug() << property << value.variant().toString();
 
     emit propertyValue(property, value.variant().toString());
 }
@@ -275,7 +286,6 @@ void Monitor::onLinkLossChange(int value)
 
 void Monitor::onPathlossChange(int value)
 {
-    qWarning() << "mthreshold:" << m_threshold << value;
     m_threshold = value;
 }
 

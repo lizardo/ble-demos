@@ -122,7 +122,7 @@ Page {
 
         Text {
             id: labelPathloss
-            text: "Pathloss:"
+            text: "Unlock on signal level:"
 
             color: "#768EA5"
             font.pixelSize: 32
@@ -138,10 +138,10 @@ Page {
             objectName: "pathlossLevel"
 
             stepSize:1
-            valueIndicatorVisible: false
-            minimumValue:0
+            valueIndicatorVisible: true
+            minimumValue:-1
             maximumValue:2
-            value: 0
+            value: -1
 
             anchors.horizontalCenter: pathloss_bg.horizontalCenter
             anchors.top: labelPathloss.bottom
@@ -149,6 +149,19 @@ Page {
 
             onValueChanged: {
                 monitor.onPathlossChange(pathlossLevel.value)
+            }
+
+            function formatValue(v) {
+                switch(v) {
+                case -1:
+                    return "disabled";
+                case 0:
+                    return "weak";
+                case 1:
+                    return "regular";
+                 default:
+                     return "good";
+                }
             }
         }
 
