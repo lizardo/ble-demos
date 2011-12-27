@@ -1,3 +1,11 @@
+heartrate (0.0.2) lucid; urgency=low
+
+  * Update internal structure. Use qmlapplicationviewer.
+  * Fix running in Qt Simulator.
+  * Remove unused files. 
+
+ -- Bruna Moreira <bruna.moreira@openbossa.org>  Tue, 27 Dec 2011 10:18:01 -0400
+
 heartrate (0.0.1.1) unstable; urgency=low
 
   * Harmattan build.
