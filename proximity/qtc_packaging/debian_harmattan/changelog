@@ -1,3 +1,11 @@
+uiprox (0.0.2) lucid; urgency=low
+
+  * Replace custom components with pre-defined Qt components.
+  * Add hints to ImmediateAlert and LinkLoss sliders.
+  * Remove unused files.
+
+ -- Bruna Moreira <bruna.moreira@openbossa.org>  Tue, 27 Dec 2011 10:14:37 -0400
+
 uiprox (0.0.1) unstable; urgency=low
 
   * Initial Release.
