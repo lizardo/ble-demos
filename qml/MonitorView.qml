@@ -45,7 +45,10 @@ Page {
 
             model: monitor.deviceModel
             delegate: ListDelegate {
-                onClicked: monitor.setDevice(index)
+                onClicked: {
+                    listView.currentIndex = index
+                    monitor.setDevice(index)
+                }
             }
             clip: true
             highlight: Rectangle { color: "#02118A"; radius: 5 }
