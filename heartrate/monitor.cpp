@@ -99,10 +99,9 @@ void Monitor::setAdapter(QString hci)
 
 void Monitor::setDevice(int index)
 {
-    setStatusMessage("Setting up device...");
     QApplication::processEvents();
     if (index < 0 || index >= m_devices.count()) {
-	setStatusMessage("No device selected");
+        setStatusMessage("Device index out of range");
         return;
     }
 
@@ -111,7 +110,7 @@ void Monitor::setDevice(int index)
         return;
     m_device = device;
 
-
+    setStatusMessage("Waiting for measurements...");
     QDBusArgument services = device->GetProperties().value()["Services"].value<QDBusArgument>();
     services.beginArray();
     while (!services.atEnd()) {
@@ -149,11 +148,10 @@ bool Monitor::checkServices(Device* device) const
 
 void Monitor::lookDevices(void)
 {
-    setStatusMessage("Looking for devices... ");
     QDBusReply<QList<QDBusObjectPath> > slReply = m_adapter->ListDevices();
 
     if (!slReply.isValid()) {
-	setStatusMessage("Error: " + slReply.error().message());
+        qDebug() << "Error: " << slReply.error().message();
         return;
     }
 
@@ -198,4 +196,3 @@ QAbstractItemModel* Monitor::getDeviceModel() const
 {
     return m_deviceModel;
 }
-
