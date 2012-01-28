@@ -57,6 +57,7 @@ public:
 
     QString get_value() const { return m_value; }
     QString get_time_type() const { return m_timetype; }
+    void setStatusMessage(const QString &msg);
     QAbstractItemModel* getDeviceModel() const;
     void setAdapter();
 

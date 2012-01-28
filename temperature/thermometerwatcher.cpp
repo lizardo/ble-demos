@@ -90,7 +90,7 @@ void ThermometerWatcherAdaptor::setDevice(int index)
 {
     qWarning() << "Setting device..";
     if (index < 0 || index >= m_devices.count()) {
-        qWarning() << "Device index out of range.";
+        setStatusMessage("Device index out of range");
         return;
     }
 
@@ -99,6 +99,7 @@ void ThermometerWatcherAdaptor::setDevice(int index)
         return;
     m_device = device;
 
+    setStatusMessage("Waiting for measurements...");
     Thermometer thermometer(BLUEZ_SERVICE_NAME, device->path(), QDBusConnection::systemBus());
     thermometer.RegisterWatcher(QDBusObjectPath(COLLECTOR_OBJPATH));
 }
@@ -167,6 +168,7 @@ void ThermometerWatcherAdaptor::lookDevices(void)
     }
     m_deviceModel->setStringList(list);
     qDebug() << "done! " << list.count() << " devices found.";
+    setStatusMessage("No device selected");
 }
 
 void ThermometerWatcherAdaptor::destroyDevices()
@@ -178,4 +180,10 @@ void ThermometerWatcherAdaptor::destroyDevices()
 QAbstractItemModel* ThermometerWatcherAdaptor::getDeviceModel() const
 {
     return m_deviceModel;
+}
+
+void ThermometerWatcherAdaptor::setStatusMessage(const QString &msg)
+{
+    m_timetype = msg;
+    emit valueChangedSignal();
 }
