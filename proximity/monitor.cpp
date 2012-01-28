@@ -141,9 +141,15 @@ void Monitor::setAdapter()
 
 void Monitor::setDevice(int index)
 {
+    qDebug() << "Checking proximity capacity...";
+
+    if (index < 0 || index >= devices.count()) {
+        qDebug() << "Device index out of range";
+        return;
+    }
+
     device = devices.at(index);
 
-    qWarning() << "Checking proximity capacity...";
     proximity = new Proximity(BLUEZ_SERVICE_NAME,
                 device->path(), QDBusConnection::systemBus());
 
