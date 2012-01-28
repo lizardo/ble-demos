@@ -36,7 +36,6 @@ CONFIG += qdbus
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    monitor.cpp \
     manager.cpp \
     adapter.cpp \
     device.cpp \
@@ -58,7 +57,6 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/changelog
 
 HEADERS += \
-    monitor.h \
     manager.h \
     adapter.h \
     device.h \
