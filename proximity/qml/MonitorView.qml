@@ -52,7 +52,12 @@ Page {
         objectName: "listView"
         currentIndex: -1
 
-        anchors.fill: list_bg
+        anchors.top: list_bg.top
+        anchors.left: list_bg.left
+        anchors.right: list_bg.right
+        // Hack to add a not planned unlock slider without changing the list bg image.
+        // Once fixed, "anchors.fill" can be used.
+        height: list_bg.height - 3 * 50
 
         model: monitor.deviceModel
         delegate: ListDelegate {
