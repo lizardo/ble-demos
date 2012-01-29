@@ -65,6 +65,7 @@ Page {
             titleSize: 36
             height: 50
             onClicked: {
+                listView.currentIndex = index
                 monitor.setDevice(index)
                 contentView.enabled = true
             }
