@@ -1,4 +1,11 @@
-uiprox (0.0.2) lucid; urgency=low
+uiprox (0.0.3) unstable; urgency=low
+
+  * UI fixes/improvements
+  * New application icons
+
+ -- Anderson Lizardo <anderson.lizardo@openbossa.org>  Sun, 29 Jan 2012 16:36:04 -0400
+
+uiprox (0.0.2) unstable; urgency=low
 
   * Replace custom components with pre-defined Qt components.
   * Add hints to ImmediateAlert and LinkLoss sliders.

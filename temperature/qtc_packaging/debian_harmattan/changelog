@@ -1,4 +1,11 @@
-temperature (0.0.2) lucid; urgency=low
+temperature (0.0.3) unstable; urgency=low
+
+  * UI fixes/improvements
+  * New application icons
+
+ -- Anderson Lizardo <anderson.lizardo@openbossa.org>  Sun, 29 Jan 2012 16:36:04 -0400
+
+temperature (0.0.2) unstable; urgency=low
 
   * Use Thermometer API.
   * Add measurement location in the UI.

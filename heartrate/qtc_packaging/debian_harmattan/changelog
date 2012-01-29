@@ -1,4 +1,11 @@
-heartrate (0.0.2) lucid; urgency=low
+heartrate (0.0.3) unstable; urgency=low
+
+  * UI fixes/improvements
+  * New application icons
+
+ -- Anderson Lizardo <anderson.lizardo@openbossa.org>  Sun, 29 Jan 2012 16:36:04 -0400
+
+heartrate (0.0.2) unstable; urgency=low
 
   * Update internal structure. Use qmlapplicationviewer.
   * Fix running in Qt Simulator.
