@@ -76,6 +76,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
 
             text: monitor.value
+            visible: text != "-1"
             platformStyle: LabelStyle {
                 fontPixelSize: 147
             }
