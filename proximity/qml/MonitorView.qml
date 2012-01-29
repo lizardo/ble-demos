@@ -91,6 +91,7 @@ Page {
 
         Text {
             id: labelSignalLevel
+            visible: !statusMessage.visible
             text: "Signal Level:"
 
             color: "#768EA5"
@@ -105,6 +106,7 @@ Page {
 
         Text {
             id: signalLevel
+            visible: !statusMessage.visible
             objectName: "signalLevel"
 
             text: "unknown"
@@ -118,6 +120,18 @@ Page {
             anchors.leftMargin: 5
         }
 
+        Text {
+            id: statusMessage
+            visible: !contentView.enabled
+            anchors.fill: signal_bg
+            anchors.topMargin: 50
+
+            color: "#768EA5"
+            font.pixelSize: 32
+            text: "No Device Selected"
+            horizontalAlignment: Text.AlignHCenter
+        }
+
         Image {
             id: unlock_bg
             source: "images/content_bg_alerts.png"
@@ -129,7 +143,7 @@ Page {
             id: labelUnlock
             text: "Unlock on signal level:"
 
-            color: "#768EA5"
+            color: enabled ? "#768EA5" : "lightgray"
             font.pixelSize: 32
 
             anchors.top: unlock_bg.top
@@ -181,7 +195,7 @@ Page {
             id: labelImmediate
             text: "Immediate Alert Level:"
 
-            color: "#768EA5"
+            color: enabled ? "#768EA5" : "lightgray"
             font.pixelSize: 32
 
             anchors.top: immediate_bg.top
@@ -231,7 +245,7 @@ Page {
             id: labelLinkloss
             text: "Linkloss Alert Level:"
 
-            color: "#768EA5"
+            color: enabled ? "#768EA5" : "lightgray"
             font.pixelSize: 32
 
             anchors.top: linkloss_bg.top
