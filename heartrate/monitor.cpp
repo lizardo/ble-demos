@@ -189,7 +189,7 @@ void Monitor::ValueChanged(const QDBusObjectPath&, const QByteArray& value)
 void Monitor::setStatusMessage(const QString &msg)
 {
     m_statusMessage = msg;
-    statusChangedSignal();
+    emit statusChangedSignal();
 }
 
 QAbstractItemModel* Monitor::getDeviceModel() const
