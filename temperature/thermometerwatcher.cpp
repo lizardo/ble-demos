@@ -40,7 +40,7 @@ public:
 
 ThermometerWatcherAdaptor::ThermometerWatcherAdaptor()
     : QDBusAbstractAdaptor(QCoreApplication::instance()), m_value("-1"), m_timetype(""), m_manager(0),
-      m_adapter(0), m_device(0), m_deviceModel(new DeviceListModel(this))
+      m_adapter(0), m_selectedDevice(0), m_pairingDevice(0), m_deviceModel(new DeviceListModel(this))
 {
     // constructor
     setAutoRelaySignals(true);
@@ -95,13 +95,60 @@ void ThermometerWatcherAdaptor::setDevice(int index)
     }
 
     Device* device = m_devices[index];
-    if (m_device == device)
+    if (m_selectedDevice == device)
         return;
-    m_device = device;
+    m_selectedDevice = device;
 
     setStatusMessage("Waiting for measurements...");
     Thermometer thermometer(BLUEZ_SERVICE_NAME, device->path(), QDBusConnection::systemBus());
     thermometer.RegisterWatcher(QDBusObjectPath(COLLECTOR_OBJPATH));
+}
+
+void ThermometerWatcherAdaptor::onDeviceCreated(const QDBusObjectPath &objPath)
+{
+    qDebug() << "Device created: " << objPath.path();
+
+    if (m_pairingDevice && !m_devices.contains(m_pairingDevice)) {
+        // Deleting last device created but not paired, maybe some error occurred.
+        m_pairingDevice->deleteLater();
+    }
+
+    m_pairingDevice = new Device(BLUEZ_SERVICE_NAME, objPath.path(),
+                                QDBusConnection::systemBus(), this);
+
+    connect(m_pairingDevice, SIGNAL(PropertyChanged(QString,QDBusVariant)),
+            this, SLOT(onDevicePropertyChanged(QString,QDBusVariant)));
+}
+
+void ThermometerWatcherAdaptor::onDeviceRemoved(const QDBusObjectPath &objPath)
+{
+    qDebug() << "Device removed: " << objPath.path();
+
+    foreach(Device* d, m_devices) {
+        if (d->path() == objPath.path()) {
+            if (d == m_selectedDevice) {
+                m_selectedDevice = 0;
+                m_timetype = "";
+                m_value = "-1";
+                emit valueChangedSignal();
+            }
+            m_devices.removeOne(d);
+            break;
+        }
+    }
+    m_deviceModel->setStringList(getDevicesName());
+}
+
+void ThermometerWatcherAdaptor::onDevicePropertyChanged(const QString &in0, const QDBusVariant &in1)
+{
+    if (in0 == "Trusted" && in1.variant().toBool()) {
+        Device *d = static_cast<Device*>(sender());
+        qDebug() << "Device added: " << d->path();
+        if (!m_devices.contains(d) && checkServices(d)) {
+            m_devices << d;
+            m_deviceModel->setStringList(getDevicesName());
+        }
+    }
 }
 
 void ThermometerWatcherAdaptor::setAdapter()
@@ -130,6 +177,11 @@ void ThermometerWatcherAdaptor::setAdapter()
     m_adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
                         QDBusConnection::systemBus());
 
+    connect(m_adapter, SIGNAL(DeviceCreated(QDBusObjectPath)),
+                     this, SLOT(onDeviceCreated(QDBusObjectPath)));
+    connect(m_adapter, SIGNAL(DeviceRemoved(QDBusObjectPath)),
+            this, SLOT(onDeviceRemoved(QDBusObjectPath)));
+
     lookDevices();
 }
 
@@ -150,10 +202,12 @@ void ThermometerWatcherAdaptor::lookDevices(void)
         qWarning() << "Error: " << slReply.error();
         return;
     }
+    m_devices.clear();
 
     QList<QDBusObjectPath> obpList = slReply.value();
     for (int i = 0; i < obpList.count(); i++) {
-        Device* device = new Device(BLUEZ_SERVICE_NAME, obpList[i].path(),QDBusConnection::systemBus());
+        Device* device = new Device(BLUEZ_SERVICE_NAME, obpList[i].path(),
+                                    QDBusConnection::systemBus(), this);
         if (checkServices(device))
             m_devices << device;
         else
@@ -161,11 +215,7 @@ void ThermometerWatcherAdaptor::lookDevices(void)
     }
 
     // Fill the device model
-    QStringList list;
-    foreach(Device* d, m_devices) {
-        QDBusReply<PropertyMap> properties = d->GetProperties();
-        list << properties.value().value("Name").toString();
-    }
+    QStringList list = getDevicesName();
     m_deviceModel->setStringList(list);
     qDebug() << "done! " << list.count() << " devices found.";
     setStatusMessage("No device selected");
@@ -186,4 +236,14 @@ void ThermometerWatcherAdaptor::setStatusMessage(const QString &msg)
 {
     m_timetype = msg;
     emit valueChangedSignal();
+}
+
+QStringList ThermometerWatcherAdaptor::getDevicesName()
+{
+    QStringList list;
+    foreach(Device* d, m_devices) {
+        QDBusReply<PropertyMap> properties = d->GetProperties();
+        list << properties.value().value("Name").toString();
+    }
+    return list;
 }

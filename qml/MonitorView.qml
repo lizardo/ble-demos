@@ -29,10 +29,25 @@ Page {
 
     Column {
         anchors.fill: parent
-        Label {
-            text: "Devices"
-            platformStyle: LabelStyle {
-                fontPixelSize: 36
+        spacing: 10
+        Row {
+            spacing: 70
+
+            Label {
+                id: labelDevice
+                text: "Devices"
+                platformStyle: LabelStyle {
+                    fontPixelSize: 36
+                }
+            }
+            Button {
+                width: 240
+                text: qsTr("Manage devices")
+                onClicked: {
+                    console.log("Loading bluetooth settings...")
+                    ctrlpanel.launchBluetooth();
+                    console.log("Loaded.")
+                }
             }
         }
         Separator {}

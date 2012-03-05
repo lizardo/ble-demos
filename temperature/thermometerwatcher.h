@@ -67,6 +67,9 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void MeasurementReceived(const QVariantMap &measure);
     void setDevice(int index);
+    void onDeviceCreated(const QDBusObjectPath &objPath);
+    void onDeviceRemoved(const QDBusObjectPath &objPath);
+    void onDevicePropertyChanged  (const QString &in0, const QDBusVariant &in1);
 Q_SIGNALS: // SIGNALS
 private slots:
     void delayedInitialization();
@@ -76,13 +79,15 @@ private:
     QString m_timetype;
     org::bluez::Manager* m_manager;
     org::bluez::Adapter* m_adapter;
-    org::bluez::Device* m_device;
+    org::bluez::Device* m_selectedDevice;
+    org::bluez::Device* m_pairingDevice;
     QList<org::bluez::Device*> m_devices;
     QStringListModel* m_deviceModel;
 
     void lookDevices(void);
     bool checkServices(org::bluez::Device* device) const;
     void destroyDevices();
+    QStringList getDevicesName();
 };
 
 #endif

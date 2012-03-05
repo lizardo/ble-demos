@@ -66,10 +66,4 @@ HEADERS += \
     thermometer.h
 
 
-
-
-
-
-
-
-
+include(../common/controlpanel/controlpanel.pri)
