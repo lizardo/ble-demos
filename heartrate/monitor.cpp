@@ -42,7 +42,9 @@ public:
     }
 };
 
-Monitor::Monitor(QString hci) : QDBusAbstractAdaptor(QCoreApplication::instance()), m_manager(0), m_adapter(0), m_device(0), m_value(-1), m_skinContact(false), m_hci(hci), m_deviceModel(new DeviceListModel(this))
+Monitor::Monitor(QString hci) : QDBusAbstractAdaptor(QCoreApplication::instance()), m_manager(0),
+    m_adapter(0), m_selectedDevice(0), m_pairingDevice(0), m_value(-1), m_skinContact(false),
+    m_hci(hci), m_deviceModel(new DeviceListModel(this))
 {
     QTimer::singleShot(0, this, SLOT(delayedInitialization()));
 }
@@ -94,6 +96,11 @@ void Monitor::setAdapter(QString hci)
     m_adapter = new Adapter(BLUEZ_SERVICE_NAME, obReply.value().path(),
                         QDBusConnection::systemBus());
 
+    connect(m_adapter, SIGNAL(DeviceCreated(QDBusObjectPath)),
+                     this, SLOT(onDeviceCreated(QDBusObjectPath)));
+    connect(m_adapter, SIGNAL(DeviceRemoved(QDBusObjectPath)),
+            this, SLOT(onDeviceRemoved(QDBusObjectPath)));
+
     lookDevices();
 }
 
@@ -106,9 +113,9 @@ void Monitor::setDevice(int index)
     }
 
     Device* device = m_devices[index];
-    if (m_device == device)
+    if (m_selectedDevice == device)
         return;
-    m_device = device;
+    m_selectedDevice = device;
 
     setStatusMessage("Waiting for measurements...");
     QDBusArgument services = device->GetProperties().value()["Services"].value<QDBusArgument>();
@@ -138,6 +145,52 @@ void Monitor::setDevice(int index)
     services.endArray();
 }
 
+void Monitor::onDeviceCreated(const QDBusObjectPath &objPath)
+{
+    qDebug() << "Device created: " << objPath.path();
+
+    if (m_pairingDevice && !m_devices.contains(m_pairingDevice)) {
+        // Deleting last device created but not paired, maybe some error occurred.
+        m_pairingDevice->deleteLater();
+    }
+
+    m_pairingDevice = new Device(BLUEZ_SERVICE_NAME, objPath.path(),
+                                QDBusConnection::systemBus(), this);
+
+    connect(m_pairingDevice, SIGNAL(PropertyChanged(QString,QDBusVariant)),
+            this, SLOT(onDevicePropertyChanged(QString,QDBusVariant)));
+}
+
+void Monitor::onDeviceRemoved(const QDBusObjectPath &objPath)
+{
+    qDebug() << "Device removed: " << objPath.path();
+
+    foreach(Device* d, m_devices) {
+        if (d->path() == objPath.path()) {
+            if (d == m_selectedDevice) {
+                m_selectedDevice = 0;
+                m_value = -1;
+                emit valueChangedSignal();
+            }
+            m_devices.removeOne(d);
+            break;
+        }
+    }
+    m_deviceModel->setStringList(getDevicesName());
+}
+
+void Monitor::onDevicePropertyChanged(const QString &in0, const QDBusVariant &in1)
+{
+    if (in0 == "Trusted" && in1.variant().toBool()) {
+        Device *d = static_cast<Device*>(sender());
+        qDebug() << "Device added: " << d->path();
+        if (!m_devices.contains(d) && checkServices(d)) {
+            m_devices << d;
+            m_deviceModel->setStringList(getDevicesName());
+        }
+    }
+}
+
 bool Monitor::checkServices(Device* device) const
 {
     QDBusReply<PropertyMap> properties = device->GetProperties();
@@ -154,6 +207,7 @@ void Monitor::lookDevices(void)
         qDebug() << "Error: " << slReply.error().message();
         return;
     }
+    m_devices.clear();
 
     QList<QDBusObjectPath> obpList = slReply.value();
     for (int i = 0; i < obpList.count(); i++) {
@@ -164,11 +218,7 @@ void Monitor::lookDevices(void)
             delete device;
     }
     // Fill the device model
-    QStringList list;
-    foreach(Device* d, m_devices) {
-        QDBusReply<PropertyMap> properties = d->GetProperties();
-        list << properties.value().value("Name").toString();
-    }
+    QStringList list = getDevicesName();
     m_deviceModel->setStringList(list);
     qDebug() << "done! " << list.count() << " devices found.";
     setStatusMessage("No device selected");
@@ -195,4 +245,14 @@ void Monitor::setStatusMessage(const QString &msg)
 QAbstractItemModel* Monitor::getDeviceModel() const
 {
     return m_deviceModel;
+}
+
+QStringList Monitor::getDevicesName()
+{
+    QStringList list;
+    foreach(Device* d, m_devices) {
+        QDBusReply<PropertyMap> properties = d->GetProperties();
+        list << properties.value().value("Name").toString();
+    }
+    return list;
 }

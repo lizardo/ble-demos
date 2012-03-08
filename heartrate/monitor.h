@@ -60,6 +60,9 @@ public:
 public slots:
     void ValueChanged(const QDBusObjectPath& characteristic, const QByteArray& value);
     void setDevice(int index);
+    void onDeviceCreated(const QDBusObjectPath &objPath);
+    void onDeviceRemoved(const QDBusObjectPath &objPath);
+    void onDevicePropertyChanged  (const QString &in0, const QDBusVariant &in1);
 signals:
     void valueChangedSignal();
     void statusChangedSignal();
@@ -69,7 +72,8 @@ private slots:
 private:
     org::bluez::Manager* m_manager;
     org::bluez::Adapter* m_adapter;
-    org::bluez::Device* m_device;
+    org::bluez::Device* m_selectedDevice;
+    org::bluez::Device* m_pairingDevice;
     QList<org::bluez::Device*> m_devices;
     int m_value;
     bool m_skinContact;
@@ -80,6 +84,7 @@ private:
     void lookDevices(void);
     void destroyDevices();
     bool checkServices(org::bluez::Device* device) const;
+    QStringList getDevicesName();
 };
 
 #endif
