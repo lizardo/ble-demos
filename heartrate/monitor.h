@@ -45,6 +45,7 @@ class Monitor: public QDBusAbstractAdaptor
     Q_PROPERTY(int value READ value NOTIFY valueChangedSignal)
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusChangedSignal)
     Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
+    Q_PROPERTY(int selectedDeviceIndex READ getSelectedDeviceIndex NOTIFY deviceChangedSignal)
 
 public:
     Monitor(QString hci = QString());
@@ -55,6 +56,7 @@ public:
     int value() const { return m_value; }
     bool skinContact() const { return m_skinContact; }
     QString statusMessage() const { return m_statusMessage; }
+    int getSelectedDeviceIndex() const { return m_selectedDeviceIndex; }
     void setStatusMessage(const QString &msg);
     QAbstractItemModel* getDeviceModel() const;
 public slots:
@@ -66,6 +68,7 @@ public slots:
 signals:
     void valueChangedSignal();
     void statusChangedSignal();
+    void deviceChangedSignal();
 private slots:
     void delayedInitialization();
 
@@ -80,6 +83,7 @@ private:
     QString m_statusMessage;
     QString m_hci;
     QStringListModel* m_deviceModel;
+    int m_selectedDeviceIndex;
 
     void lookDevices(void);
     void destroyDevices();

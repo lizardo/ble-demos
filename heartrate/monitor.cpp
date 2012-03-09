@@ -44,7 +44,7 @@ public:
 
 Monitor::Monitor(QString hci) : QDBusAbstractAdaptor(QCoreApplication::instance()), m_manager(0),
     m_adapter(0), m_selectedDevice(0), m_pairingDevice(0), m_value(-1), m_skinContact(false),
-    m_hci(hci), m_deviceModel(new DeviceListModel(this))
+    m_hci(hci), m_deviceModel(new DeviceListModel(this)), m_selectedDeviceIndex(-1)
 {
     QTimer::singleShot(0, this, SLOT(delayedInitialization()));
 }
@@ -116,6 +116,8 @@ void Monitor::setDevice(int index)
     if (m_selectedDevice == device)
         return;
     m_selectedDevice = device;
+    m_selectedDeviceIndex = index;
+    emit deviceChangedSignal();
 
     setStatusMessage("Waiting for measurements...");
     QDBusArgument services = device->GetProperties().value()["Services"].value<QDBusArgument>();
@@ -169,8 +171,11 @@ void Monitor::onDeviceRemoved(const QDBusObjectPath &objPath)
         if (d->path() == objPath.path()) {
             if (d == m_selectedDevice) {
                 m_selectedDevice = 0;
+                m_selectedDeviceIndex = -1;
                 m_value = -1;
                 emit valueChangedSignal();
+                emit deviceChangedSignal();
+                setStatusMessage("No device selected");
             }
             m_devices.removeOne(d);
             break;
