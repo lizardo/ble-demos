@@ -55,15 +55,12 @@ Page {
             anchors.left: parent.left
             anchors.right: parent.right
             id: listView
-            currentIndex: -1
+            currentIndex: monitor.selectedDeviceIndex
             height: 300
 
             model: monitor.deviceModel
             delegate: ListDelegate {
-                onClicked: {
-                    listView.currentIndex = index
-                    monitor.setDevice(index)
-                }
+                onClicked: monitor.setDevice(index)
             }
             clip: true
             highlight: Rectangle { color: "#02118A"; radius: 5 }

@@ -40,7 +40,8 @@ public:
 
 ThermometerWatcherAdaptor::ThermometerWatcherAdaptor()
     : QDBusAbstractAdaptor(QCoreApplication::instance()), m_value("-1"), m_timetype(""), m_manager(0),
-      m_adapter(0), m_selectedDevice(0), m_pairingDevice(0), m_deviceModel(new DeviceListModel(this))
+      m_adapter(0), m_selectedDevice(0), m_pairingDevice(0), m_deviceModel(new DeviceListModel(this)),
+      m_selectedDeviceIndex(-1)
 {
     // constructor
     setAutoRelaySignals(true);
@@ -98,6 +99,8 @@ void ThermometerWatcherAdaptor::setDevice(int index)
     if (m_selectedDevice == device)
         return;
     m_selectedDevice = device;
+    m_selectedDeviceIndex = index;
+    emit deviceChangedSignal();
 
     setStatusMessage("Waiting for measurements...");
     Thermometer thermometer(BLUEZ_SERVICE_NAME, device->path(), QDBusConnection::systemBus());
@@ -128,9 +131,10 @@ void ThermometerWatcherAdaptor::onDeviceRemoved(const QDBusObjectPath &objPath)
         if (d->path() == objPath.path()) {
             if (d == m_selectedDevice) {
                 m_selectedDevice = 0;
-                m_timetype = "";
+                m_selectedDeviceIndex = -1;
                 m_value = "-1";
-                emit valueChangedSignal();
+                setStatusMessage("No device selected");
+                emit deviceChangedSignal();
             }
             m_devices.removeOne(d);
             break;

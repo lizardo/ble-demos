@@ -50,6 +50,7 @@ class ThermometerWatcherAdaptor: public QDBusAbstractAdaptor
     Q_PROPERTY(QString value READ get_value NOTIFY valueChangedSignal)
     Q_PROPERTY(QString statusMessage READ get_time_type NOTIFY valueChangedSignal)
     Q_PROPERTY(QObject* deviceModel READ getDeviceModel CONSTANT)
+    Q_PROPERTY(int selectedDeviceIndex READ getSelectedDeviceIndex NOTIFY deviceChangedSignal)
 
 public:
     ThermometerWatcherAdaptor();
@@ -57,12 +58,14 @@ public:
 
     QString get_value() const { return m_value; }
     QString get_time_type() const { return m_timetype; }
+    int getSelectedDeviceIndex() const { return m_selectedDeviceIndex; }
     void setStatusMessage(const QString &msg);
     QAbstractItemModel* getDeviceModel() const;
     void setAdapter();
 
 signals:
     void valueChangedSignal();
+    void deviceChangedSignal();
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void MeasurementReceived(const QVariantMap &measure);
@@ -83,6 +86,7 @@ private:
     org::bluez::Device* m_pairingDevice;
     QList<org::bluez::Device*> m_devices;
     QStringListModel* m_deviceModel;
+    int m_selectedDeviceIndex;
 
     void lookDevices(void);
     bool checkServices(org::bluez::Device* device) const;
