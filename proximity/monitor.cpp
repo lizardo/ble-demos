@@ -150,7 +150,7 @@ void Monitor::setDevice(int index)
 
     device = devices.at(index);
 
-    proximity = new Proximity(BLUEZ_SERVICE_NAME,
+    proximity = new ProximityMonitor(BLUEZ_SERVICE_NAME,
                 device->path(), QDBusConnection::systemBus());
 
     QObject::connect(

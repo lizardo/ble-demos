@@ -60,7 +60,7 @@ public slots:
 private:
     Manager *manager;
     Adapter *adapter;
-    Proximity *proximity;
+    ProximityMonitor *proximity;
     Device *device;
     QList<Device *> devices;
 
