@@ -18,7 +18,20 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#define LE_LINK 0x80
+
+// This is the device ID, the same used for naming
+// bluetooth adapters on Linux (i.e. the X in hciX)
+// N9 has only hci0
+#define HCI_DEV_ID 0
+
 #include <QStringListModel>
+
+#include <sys/ioctl.h>
+
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
 
 #include "monitor.h"
 
@@ -301,4 +314,91 @@ void Monitor::onUnlockChange(int value)
 QAbstractItemModel* Monitor::getDeviceModel() const
 {
     return m_deviceModel;
+}
+
+static int find_conn(int s, int dev_id, long arg)
+{
+    struct hci_conn_list_req *cl;
+    struct hci_conn_info *ci;
+    int i;
+
+    cl = (struct hci_conn_list_req *)malloc(10 * sizeof(*ci) + sizeof(*cl));
+    if (!cl) {
+        qWarning() << "Can't allocate memory";
+        return 1;
+    }
+    cl->dev_id = dev_id;
+    cl->conn_num = 10;
+    ci = cl->conn_info;
+
+    if (ioctl(s, HCIGETCONNLIST, (void *) cl)) {
+        qWarning() << "Can't get connection list";
+        return 1;
+    }
+
+    for (i = 0; i < cl->conn_num; i++, ci++)
+        if (!bacmp((bdaddr_t *) arg, &ci->bdaddr)) {
+            free(cl);
+            return 1;
+        }
+
+    free(cl);
+    return 0;
+}
+
+int Monitor::readRSSI()
+{
+    struct hci_conn_info_req *cr;
+    bdaddr_t bdaddr;
+    int8_t rssi;
+    int dd, dev_id, index;
+
+    index = devices.indexOf(device);
+    if (index < 0) {
+        qWarning() << "No device available/selected";
+        return 1;
+    }
+
+    str2ba(qPrintable(m_address.value(index)), &bdaddr);
+
+    dev_id = HCI_DEV_ID;
+    if (dev_id < 0) {
+        dev_id = hci_for_each_dev(HCI_UP, find_conn, (long) &bdaddr);
+        if (dev_id < 0) {
+            qWarning() << "Error: Not connected";
+            return 1;
+        }
+    }
+
+    dd = hci_open_dev(dev_id);
+    if (dd < 0) {
+        qWarning() << "Error: HCI device open failed";
+        return 1;
+    }
+
+    cr = (struct hci_conn_info_req *)malloc(sizeof(*cr) + sizeof(struct hci_conn_info));
+    if (!cr) {
+        qWarning() << "Error: Can't allocate memory";
+        return 1;
+    }
+
+    bacpy(&cr->bdaddr, &bdaddr);
+    cr->type = LE_LINK;
+    if ((ioctl(dd, HCIGETCONNINFO, (unsigned long) cr)) < 0) {
+        qWarning() << "Error: Get connection info failed";
+        return 1;
+    }
+
+    if (hci_read_rssi(dd, htobs(cr->conn_info->handle), &rssi, 1000) < 0) {
+        qWarning() << "Error: Read RSSI failed";
+        return 1;
+    }
+
+    qDebug() << "RSSI return value: " << rssi;
+
+    free(cr);
+
+    hci_close_dev(dd);
+
+    return rssi;
 }

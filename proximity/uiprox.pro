@@ -8,6 +8,8 @@ TEMPLATE = app
 DEPENDPATH += .
 INCLUDEPATH += .
 
+LIBS += -lbluetooth
+
 DEFINES += MEEGO_EDITION_HARMATTAN
 
 # Input

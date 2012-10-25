@@ -74,6 +74,8 @@ private:
     void checkServices(QString path);
     QStringList devicesName();
 
+    int readRSSI();
+
     void unlock();
     void lock();
 };
