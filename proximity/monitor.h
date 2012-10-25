@@ -63,6 +63,7 @@ private:
     ProximityMonitor *proximity;
     Device *device;
     QList<Device *> devices;
+    QStringList m_address;
 
     QStringListModel* m_deviceModel;
 

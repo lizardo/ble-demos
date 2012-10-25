@@ -103,8 +103,10 @@ Monitor::~Monitor()
 
 void Monitor::destroyDevices()
 {
-    while (!devices.isEmpty())
+    while (!devices.isEmpty()) {
         delete devices.takeFirst();
+        m_address.removeFirst();
+    }
 
     delete m_deviceModel;
 }
@@ -195,6 +197,7 @@ QStringList Monitor::devicesName()
         QDBusReply<PropertyMap> properties = d->GetProperties();
 
         list << QVariant(properties.value().value("Name")).toString();
+        m_address << QVariant(properties.value().value("Address")).toString();
     }
 
     return list;
