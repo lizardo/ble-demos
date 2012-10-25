@@ -54,7 +54,7 @@ public:
 
 Monitor::Monitor()
     : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
-      m_threshold(-1)
+      m_threshold(-1), m_rssiTimer(new QTimer(this))
 {
     QDBusConnection dbus = QDBusConnection::systemBus();
 
@@ -183,6 +183,9 @@ void Monitor::setDevice(int index)
     QMap<QString, QVariant> p = properties.value();
     foreach (QString k, properties.value().keys())
         propertyChanged(k, QDBusVariant(p.value(k)));
+
+    connect(m_rssiTimer, SIGNAL(timeout()), this, SLOT(updateRSSI()));
+    m_rssiTimer->start(1000);
 }
 
 void Monitor::checkServices(QString path)
@@ -401,4 +404,11 @@ int Monitor::readRSSI()
     hci_close_dev(dd);
 
     return rssi;
+}
+
+void Monitor::updateRSSI()
+{
+    readRSSI();
+
+    /* FIXME: Add code to threshold and "SignalLevel" D-Bus signal */
 }

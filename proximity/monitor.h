@@ -48,6 +48,9 @@ signals:
     void alarm(QString type);
     void propertyValue(QString property, QString value);
 
+private slots:
+    void updateRSSI();
+
 public slots:
     void propertyChanged(const QString &property, const QDBusVariant &value);
 
@@ -68,6 +71,7 @@ private:
     QStringListModel* m_deviceModel;
 
     int m_threshold;
+    QTimer *m_rssiTimer;
 
     void lookDevices(void);
     void destroyDevices();
