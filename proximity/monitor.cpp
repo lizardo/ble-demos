@@ -319,42 +319,12 @@ QAbstractItemModel* Monitor::getDeviceModel() const
     return m_deviceModel;
 }
 
-static int find_conn(int s, int dev_id, long arg)
-{
-    struct hci_conn_list_req *cl;
-    struct hci_conn_info *ci;
-    int i;
-
-    cl = (struct hci_conn_list_req *)malloc(10 * sizeof(*ci) + sizeof(*cl));
-    if (!cl) {
-        qWarning() << "Can't allocate memory";
-        return 1;
-    }
-    cl->dev_id = dev_id;
-    cl->conn_num = 10;
-    ci = cl->conn_info;
-
-    if (ioctl(s, HCIGETCONNLIST, (void *) cl)) {
-        qWarning() << "Can't get connection list";
-        return 1;
-    }
-
-    for (i = 0; i < cl->conn_num; i++, ci++)
-        if (!bacmp((bdaddr_t *) arg, &ci->bdaddr)) {
-            free(cl);
-            return 1;
-        }
-
-    free(cl);
-    return 0;
-}
-
 int Monitor::readRSSI()
 {
     struct hci_conn_info_req *cr;
     bdaddr_t bdaddr;
     int8_t rssi;
-    int dd, dev_id, index;
+    int dd, index;
 
     index = devices.indexOf(device);
     if (index < 0) {
@@ -364,16 +334,7 @@ int Monitor::readRSSI()
 
     str2ba(qPrintable(m_address.value(index)), &bdaddr);
 
-    dev_id = HCI_DEV_ID;
-    if (dev_id < 0) {
-        dev_id = hci_for_each_dev(HCI_UP, find_conn, (long) &bdaddr);
-        if (dev_id < 0) {
-            qWarning() << "Error: Not connected";
-            return 1;
-        }
-    }
-
-    dd = hci_open_dev(dev_id);
+    dd = hci_open_dev(HCI_DEV_ID);
     if (dd < 0) {
         qWarning() << "Error: HCI device open failed";
         return 1;
