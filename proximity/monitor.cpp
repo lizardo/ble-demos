@@ -319,11 +319,10 @@ QAbstractItemModel* Monitor::getDeviceModel() const
     return m_deviceModel;
 }
 
-int Monitor::readRSSI()
+int Monitor::readRSSI(int8_t *rssi)
 {
     struct hci_conn_info_req *cr;
     bdaddr_t bdaddr;
-    int8_t rssi;
     int dd, index;
 
     index = devices.indexOf(device);
@@ -343,6 +342,7 @@ int Monitor::readRSSI()
     cr = (struct hci_conn_info_req *)malloc(sizeof(*cr) + sizeof(struct hci_conn_info));
     if (!cr) {
         qWarning() << "Error: Can't allocate memory";
+        hci_close_dev(dd);
         return 1;
     }
 
@@ -350,26 +350,32 @@ int Monitor::readRSSI()
     cr->type = LE_LINK;
     if ((ioctl(dd, HCIGETCONNINFO, (unsigned long) cr)) < 0) {
         qWarning() << "Error: Get connection info failed";
+        free(cr);
+        hci_close_dev(dd);
         return 1;
     }
 
-    if (hci_read_rssi(dd, htobs(cr->conn_info->handle), &rssi, 1000) < 0) {
+    if (hci_read_rssi(dd, htobs(cr->conn_info->handle), rssi, 1000) < 0) {
         qWarning() << "Error: Read RSSI failed";
+        free(cr);
+        hci_close_dev(dd);
         return 1;
     }
-
-    qDebug() << "RSSI return value: " << rssi;
 
     free(cr);
-
     hci_close_dev(dd);
 
-    return rssi;
+    return 0;
 }
 
 void Monitor::updateRSSI()
 {
-    readRSSI();
+    int8_t rssi;
+
+    if (readRSSI(&rssi))
+        return;
+
+    qDebug() << "RSSI return value: " << rssi;
 
     /* FIXME: Add code to threshold and "SignalLevel" D-Bus signal */
 }
