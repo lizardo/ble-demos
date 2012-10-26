@@ -25,6 +25,10 @@
 // N9 has only hci0
 #define HCI_DEV_ID 0
 
+/* Values based on empirical tests */
+#define LOW_RSSI_THRESHOLD  -60
+#define HIGH_RSSI_THRESHOLD -75
+
 #include <QStringListModel>
 
 #include <sys/ioctl.h>
@@ -370,12 +374,41 @@ int Monitor::readRSSI(int8_t *rssi)
 
 void Monitor::updateRSSI()
 {
-    int8_t rssi;
+    int8_t rssi, low, high;
+    QString level;
+    int v;
 
     if (readRSSI(&rssi))
         return;
 
     qDebug() << "RSSI return value: " << rssi;
 
-    /* FIXME: Add code to threshold and "SignalLevel" D-Bus signal */
+    /* FIXME: read TX Power from peer device and subtract from low/high */
+    low = LOW_RSSI_THRESHOLD;
+    high = HIGH_RSSI_THRESHOLD;
+
+    canLock = true;
+
+    if (rssi <= high) {
+        level = "weak";
+        v = 0;
+    } else if (rssi <= low) {
+        level = "regular";
+        v = 1;
+    } else {
+        level = "good";
+        v = 2;
+    }
+
+    // If m_threshold is -1 so the lock/unlock is disabled. Nothing to do
+    if (m_threshold != -1) {
+        if (m_threshold > v)
+            lock();
+        else
+            unlock();
+    }
+
+    qDebug() << "Path Loss level: " << level;
+
+    emit propertyValue("SignalLevel", level);
 }
