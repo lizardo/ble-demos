@@ -189,7 +189,21 @@ void Monitor::setDevice(int index)
         propertyChanged(k, QDBusVariant(p.value(k)));
 
     connect(m_rssiTimer, SIGNAL(timeout()), this, SLOT(updateRSSI()));
-    m_rssiTimer->start(1000);
+
+    QObject::connect(
+        device,
+        SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
+        this,
+        SLOT(devicePropertyChanged(const QString &, const QDBusVariant &)));
+
+    properties = device->GetProperties();
+    if (!properties.isValid()) {
+        qDebug() << "Error: " << properties.error();
+        exit(1);
+    }
+
+    if (QVariant(properties.value().value("Connected")).toBool() == true)
+        m_rssiTimer->start(1000);
 }
 
 void Monitor::checkServices(QString path)
@@ -411,4 +425,19 @@ void Monitor::updateRSSI()
     qDebug() << "Path Loss level: " << level;
 
     emit propertyValue("SignalLevel", level);
+}
+
+void Monitor::devicePropertyChanged(const QString &property, const QDBusVariant &value)
+{
+    qDebug() << "Device: " << property << value.variant().toString();
+
+    if (property == "Connected") {
+
+        if (value.variant().toBool() == true)
+            m_rssiTimer->start(1000);
+        else {
+            m_rssiTimer->stop();
+            emit propertyValue("SignalLevel", "unknown");
+        }
+    }
 }

@@ -50,6 +50,7 @@ signals:
 
 private slots:
     void updateRSSI();
+    void devicePropertyChanged(const QString &property, const QDBusVariant &value);
 
 public slots:
     void propertyChanged(const QString &property, const QDBusVariant &value);
