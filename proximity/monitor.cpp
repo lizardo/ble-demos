@@ -57,7 +57,7 @@ public:
 };
 
 Monitor::Monitor()
-    : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
+    : manager(NULL), adapter(NULL), proximity(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
       m_threshold(-1), m_rssiTimer(new QTimer(this)), tx_power_valid(false)
 {
     QDBusConnection dbus = QDBusConnection::systemBus();
@@ -65,6 +65,8 @@ Monitor::Monitor()
     manager = new Manager(BLUEZ_SERVICE_NAME, BLUEZ_MANAGER_PATH, dbus);
 
     setAdapter();
+
+    connect(m_rssiTimer, SIGNAL(timeout()), this, SLOT(updateRSSI()));
 }
 
 
@@ -169,6 +171,9 @@ void Monitor::setDevice(int index)
 
     device = devices.at(index);
 
+    if (proximity)
+        delete proximity;
+
     proximity = new ProximityMonitor(BLUEZ_SERVICE_NAME,
                 device->path(), QDBusConnection::systemBus());
 
@@ -187,14 +192,6 @@ void Monitor::setDevice(int index)
     QMap<QString, QVariant> p = properties.value();
     foreach (QString k, properties.value().keys())
         propertyChanged(k, QDBusVariant(p.value(k)));
-
-    connect(m_rssiTimer, SIGNAL(timeout()), this, SLOT(updateRSSI()));
-
-    QObject::connect(
-        device,
-        SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
-        this,
-        SLOT(devicePropertyChanged(const QString &, const QDBusVariant &)));
 
     properties = device->GetProperties();
     if (!properties.isValid()) {
@@ -217,6 +214,13 @@ void Monitor::checkServices(QString path)
 
     if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
         devices.append(device);
+
+        QObject::connect(
+            device,
+            SIGNAL(PropertyChanged(const QString &, const QDBusVariant &)),
+            this,
+            SLOT(devicePropertyChanged(const QString &, const QDBusVariant &)));
+
         return;
     }
 
