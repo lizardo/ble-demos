@@ -73,6 +73,8 @@ private:
 
     int m_threshold;
     QTimer *m_rssiTimer;
+    int tx_power;
+    bool tx_power_valid;
 
     void lookDevices(void);
     void destroyDevices();

@@ -58,7 +58,7 @@ public:
 
 Monitor::Monitor()
     : manager(NULL), adapter(NULL), device(NULL), m_deviceModel(new DeviceListModel(this)),
-      m_threshold(-1), m_rssiTimer(new QTimer(this))
+      m_threshold(-1), m_rssiTimer(new QTimer(this)), tx_power_valid(false)
 {
     QDBusConnection dbus = QDBusConnection::systemBus();
 
@@ -282,9 +282,12 @@ void Monitor::propertyChanged(const QString &property, const QDBusVariant &value
             else
                 unlock();
         }
+    } else if (property == "TXPower") {
+        tx_power_valid = true;
+        tx_power = value.variant().toInt();
     }
 
-    qDebug() << property << value.variant().toString();
+    qDebug() << "propertyChanged():" << property << value.variant().toString();
 
     emit propertyValue(property, value.variant().toString());
 }
@@ -397,9 +400,11 @@ void Monitor::updateRSSI()
 
     qDebug() << "RSSI return value: " << rssi;
 
-    /* FIXME: read TX Power from peer device and subtract from low/high */
-    low = LOW_RSSI_THRESHOLD;
-    high = HIGH_RSSI_THRESHOLD;
+    if (!tx_power_valid)
+        return;
+
+    low = LOW_RSSI_THRESHOLD - tx_power;
+    high = HIGH_RSSI_THRESHOLD - tx_power;
 
     canLock = true;
 
