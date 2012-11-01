@@ -170,6 +170,7 @@ void Monitor::setDevice(int index)
     }
 
     device = devices.at(index);
+    m_rssiTimer->stop();
 
     if (proximity)
         delete proximity;
@@ -214,6 +215,7 @@ void Monitor::checkServices(QString path)
 
     if (uuids.toStringList().contains(IMMEDIATE_ALERT_UUID, Qt::CaseInsensitive)) {
         devices.append(device);
+        device->setObjectName(QString::number(devices.length()));
 
         QObject::connect(
             device,
@@ -440,13 +442,17 @@ void Monitor::devicePropertyChanged(const QString &property, const QDBusVariant 
 {
     qDebug() << "Device: " << property << value.variant().toString();
 
-    if (property == "Connected") {
+    /* Only stop the Timer if the device selected and sender are the same */
+    if (device && (QObject::sender()->objectName() == device->objectName())) {
 
-        if (value.variant().toBool() == true)
-            m_rssiTimer->start(1000);
-        else {
-            m_rssiTimer->stop();
-            emit propertyValue("SignalLevel", "unknown");
+        if (property == "Connected") {
+
+            if (value.variant().toBool() == true)
+                m_rssiTimer->start(1000);
+            else {
+                m_rssiTimer->stop();
+                emit propertyValue("SignalLevel", "unknown");
+            }
         }
     }
 }
