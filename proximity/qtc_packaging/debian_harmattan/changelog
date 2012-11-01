@@ -1,3 +1,10 @@
+uiprox (0.0.4) unstable; urgency=low
+
+  * Implement RSSI reads on userspace (inside application).
+  * Fix issues when multiple devices are connected.
+
+ -- Anderson Lizardo <anderson.lizardo@openbossa.org>  Thu, 01 Nov 2012 13:28:31 -0400
+
 uiprox (0.0.3) unstable; urgency=low
 
   * UI fixes/improvements
